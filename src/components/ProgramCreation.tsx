@@ -311,76 +311,93 @@ const ProgramCreation = () => {
               
               {/* Page 2: Program Basics */}
               {currentStep === 1 && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8 animate-fade-in">
+                <div className="animate-fade-in">
                   
-                  {/* Banner Section */}
+                  {/* Banner Image Section */}
                   {programData.programType && (
-                    <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200/50 mb-8">
-                      <p className="text-stone-800 font-medium">
-                        You've selected {programData.programType?.name}
-                      </p>
+                    <div className="mb-8">
+                      <div className="w-full max-w-[1200px] mx-auto">
+                        <img
+                          src="/lovable-uploads/96a2a56e-9042-45b6-b8df-4093d76967e3.png"
+                          alt={`Banner for selected program: ${programData.programType.name} – A quick glance.`}
+                          className="w-full h-auto max-h-60 object-cover rounded-2xl shadow-lg border border-stone-200/50"
+                          style={{ maxHeight: '240px' }}
+                        />
+                      </div>
                     </div>
                   )}
 
-                  <div className="space-y-8">
-                    <div className="space-y-2">
-                      <Label htmlFor="programName" className="text-stone-800 font-medium">Program Name *</Label>
-                      <Input
-                        id="programName"
-                        value={programData.programName}
-                        onChange={(e) => updateProgramData({ programName: e.target.value })}
-                        className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
-                        placeholder="Enter program name"
-                      />
-                    </div>
-
-                    <div className="space-y-4">
-                      <Label className="text-stone-800 font-medium">Sessions</Label>
-                      <div className="grid grid-cols-2 gap-4">
-                        {programData.programType?.defaultSessions.map((session) => (
-                          <div key={session} className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                            <Checkbox
-                              id={session}
-                              checked={programData.selectedSessions.includes(session)}
-                              onCheckedChange={(checked) => {
-                                if (checked) {
-                                  updateProgramData({
-                                    selectedSessions: [...programData.selectedSessions, session]
-                                  });
-                                } else {
-                                  updateProgramData({
-                                    selectedSessions: programData.selectedSessions.filter(s => s !== session)
-                                  });
-                                }
-                              }}
-                              className="border-orange-300 data-[state=checked]:bg-orange-500"
-                            />
-                            <Label htmlFor={session} className="text-stone-800 font-medium">{session}</Label>
-                          </div>
-                        ))}
+                  <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8">
+                    
+                    {/* Banner Section */}
+                    {programData.programType && (
+                      <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200/50 mb-8">
+                        <p className="text-stone-800 font-medium">
+                          You've selected {programData.programType?.name}
+                        </p>
                       </div>
-                    </div>
+                    )}
 
-                    <div className="space-y-4">
-                      <Label className="text-stone-800 font-medium">Mode of Program</Label>
-                      <RadioGroup
-                        value={programData.mode}
-                        onValueChange={(value: 'online' | 'offline' | 'hybrid') => updateProgramData({ mode: value })}
-                        className="flex space-x-8"
-                      >
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="online" id="online" className="border-orange-300 text-orange-600" />
-                          <Label htmlFor="online" className="text-stone-800">Online</Label>
+                    <div className="space-y-8">
+                      <div className="space-y-2">
+                        <Label htmlFor="programName" className="text-stone-800 font-medium">Program Name *</Label>
+                        <Input
+                          id="programName"
+                          value={programData.programName}
+                          onChange={(e) => updateProgramData({ programName: e.target.value })}
+                          className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                          placeholder="Enter program name"
+                        />
+                      </div>
+
+                      <div className="space-y-4">
+                        <Label className="text-stone-800 font-medium">Sessions</Label>
+                        <div className="grid grid-cols-2 gap-4">
+                          {programData.programType?.defaultSessions.map((session) => (
+                            <div key={session} className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                              <Checkbox
+                                id={session}
+                                checked={programData.selectedSessions.includes(session)}
+                                onCheckedChange={(checked) => {
+                                  if (checked) {
+                                    updateProgramData({
+                                      selectedSessions: [...programData.selectedSessions, session]
+                                    });
+                                  } else {
+                                    updateProgramData({
+                                      selectedSessions: programData.selectedSessions.filter(s => s !== session)
+                                    });
+                                  }
+                                }}
+                                className="border-orange-300 data-[state=checked]:bg-orange-500"
+                              />
+                              <Label htmlFor={session} className="text-stone-800 font-medium">{session}</Label>
+                            </div>
+                          ))}
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="offline" id="offline" className="border-orange-300 text-orange-600" />
-                          <Label htmlFor="offline" className="text-stone-800">Offline</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="hybrid" id="hybrid" className="border-orange-300 text-orange-600" />
-                          <Label htmlFor="hybrid" className="text-stone-800">Hybrid</Label>
-                        </div>
-                      </RadioGroup>
+                      </div>
+
+                      <div className="space-y-4">
+                        <Label className="text-stone-800 font-medium">Mode of Program</Label>
+                        <RadioGroup
+                          value={programData.mode}
+                          onValueChange={(value: 'online' | 'offline' | 'hybrid') => updateProgramData({ mode: value })}
+                          className="flex space-x-8"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="online" id="online" className="border-orange-300 text-orange-600" />
+                            <Label htmlFor="online" className="text-stone-800">Online</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="offline" id="offline" className="border-orange-300 text-orange-600" />
+                            <Label htmlFor="offline" className="text-stone-800">Offline</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="hybrid" id="hybrid" className="border-orange-300 text-orange-600" />
+                            <Label htmlFor="hybrid" className="text-stone-800">Hybrid</Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
                     </div>
                   </div>
                 </div>
