@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ChevronLeft, Info, User, Edit, Save, Plus, Eye, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -77,19 +78,19 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
 
     // Travel Info (only show if offline or hybrid)
     ...(programData.mode === 'offline' || programData.mode === 'hybrid' ? [
-      { id: 'idType', label: 'ID Type', type: 'select' as const, mandatory: false, prefilled: false, section: 'travel' as const, options: ['Passport', 'Driving License', 'Aadhar Card', 'PAN Card'] },
-      { id: 'idNumber', label: 'ID Number', type: 'text' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'idPicture', label: 'Upload ID Picture', type: 'file' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'userPicture', label: 'Upload Your Picture', type: 'file' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'tshirtSize', label: 'T-shirt Size', type: 'select' as const, mandatory: false, prefilled: false, section: 'travel' as const, options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
-      { id: 'travelUpdate', label: 'Travel Details: Update now / later', type: 'toggle' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'airlineName', label: 'Flight: Airline Name', type: 'text' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'flightNumber', label: 'Flight: Number', type: 'text' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'arrivalDateTime', label: 'Arrival Date & Time', type: 'date' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'comingFrom', label: 'Coming From', type: 'text' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'pickupTime', label: 'Airport Pickup Time', type: 'text' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'checkInTime', label: 'Own Transport: Check-in Time & Location', type: 'text' as const, mandatory: false, prefilled: false, section: 'travel' as const },
-      { id: 'cityPickup', label: 'City Pickup: Time and Location', type: 'text' as const, mandatory: false, prefilled: false, section: 'travel' as const }
+      { id: 'idType', label: 'ID Type', type: 'select', mandatory: false, prefilled: false, section: 'travel' as const, options: ['Passport', 'Driving License', 'Aadhar Card', 'PAN Card'] },
+      { id: 'idNumber', label: 'ID Number', type: 'text', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'idPicture', label: 'Upload ID Picture', type: 'file', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'userPicture', label: 'Upload Your Picture', type: 'file', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'tshirtSize', label: 'T-shirt Size', type: 'select', mandatory: false, prefilled: false, section: 'travel' as const, options: ['XS', 'S', 'M', 'L', 'XL', 'XXL'] },
+      { id: 'travelUpdate', label: 'Travel Details: Update now / later', type: 'toggle', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'airlineName', label: 'Flight: Airline Name', type: 'text', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'flightNumber', label: 'Flight: Number', type: 'text', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'arrivalDateTime', label: 'Arrival Date & Time', type: 'date', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'comingFrom', label: 'Coming From', type: 'text', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'pickupTime', label: 'Airport Pickup Time', type: 'text', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'checkInTime', label: 'Own Transport: Check-in Time & Location', type: 'text', mandatory: false, prefilled: false, section: 'travel' as const },
+      { id: 'cityPickup', label: 'City Pickup: Time and Location', type: 'text', mandatory: false, prefilled: false, section: 'travel' as const }
     ] : [])
   ];
 
