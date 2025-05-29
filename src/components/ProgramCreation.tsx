@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -80,6 +79,30 @@ const programTypes: ProgramType[] = [
     icon: Heart,
     defaultSessions: ['ENT1', 'ENT2'],
     defaultDuration: 3
+  },
+  {
+    id: 'tat-online',
+    name: 'TAT - Online',
+    description: '',
+    icon: Sparkles,
+    defaultSessions: ['TAT Online 1', 'TAT Online 2'],
+    defaultDuration: 5
+  },
+  {
+    id: 'tat-offline',
+    name: 'TAT - Offline',
+    description: '',
+    icon: Heart,
+    defaultSessions: ['TAT Offline 1', 'TAT Offline 2'],
+    defaultDuration: 5
+  },
+  {
+    id: 'infinipath',
+    name: 'infinipath',
+    description: '',
+    icon: Sparkles,
+    defaultSessions: ['Infinipath 1', 'Infinipath 2'],
+    defaultDuration: 4
   }
 ];
 
@@ -566,10 +589,7 @@ const ProgramCreation = () => {
                                   />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label className="text-stone-800 flex items-center gap-2">
-                                    End Date
-                                    <Info className="w-4 h-4 text-stone-500" />
-                                  </Label>
+                                  <Label className="text-stone-800">End Date</Label>
                                   <Input
                                     type="date"
                                     value={programData.sessionSchedules[session]?.endDate || ''}
@@ -602,10 +622,7 @@ const ProgramCreation = () => {
                                   />
                                 </div>
                                 <div className="space-y-2">
-                                  <Label className="text-stone-800 flex items-center gap-2">
-                                    Check-out Time
-                                    <Info className="w-4 h-4 text-stone-500" />
-                                  </Label>
+                                  <Label className="text-stone-800">Check-out Time</Label>
                                   <Input
                                     type="time"
                                     value={programData.sessionSchedules[session]?.checkOutTime || ''}
