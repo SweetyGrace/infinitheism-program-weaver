@@ -109,10 +109,10 @@ const ProgramCreation = () => {
   };
 
   if (showFormPreview) {
-    // Convert ProgramType to string for PreviewUserForm compatibility
+    // Fixed: programType is already a string, no need to access .name
     const previewProgramData = {
       ...programData,
-      programType: programData.programType?.name || ''
+      programType: programData.programType || ''
     };
     
     return (
