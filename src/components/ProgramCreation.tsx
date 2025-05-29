@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import RegistrationFormPreview from './RegistrationFormPreview';
+import PreviewUserForm from './PreviewUserForm';
 
 interface ProgramType {
   id: string;
@@ -211,15 +212,16 @@ const ProgramCreation = () => {
 
   if (showFormPreview) {
     return (
-      <RegistrationFormPreview
+      <PreviewUserForm
         programData={programData}
         onBack={() => setShowFormPreview(false)}
-        onProceed={() => {
-          console.log('Proceeding with form as-is');
-        }}
-        onEditForm={() => {
+        onEditFormFields={() => {
           setShowFormPreview(false);
-          setCurrentStep(3); // Go directly to form builder (step 3 instead of step 4)
+          setCurrentStep(3);
+        }}
+        onSaveAndExit={() => {
+          console.log('Saving preview and exiting');
+          // Handle save and exit logic
         }}
       />
     );
