@@ -89,6 +89,7 @@
 }
 
 @layer components {
+  /* Typography Classes */
   .hero-title {
     @apply text-4xl md:text-5xl lg:text-6xl tracking-tight font-extrabold text-white;
   }
@@ -113,20 +114,74 @@
     @apply text-sm text-gray-600;
   }
   
+  /* Button Classes */
   .primary-button {
     @apply relative overflow-hidden px-8 py-3 text-base font-medium rounded-full text-white border-0 transition-all duration-300 shadow-lg shadow-blue-500/30 hover:shadow-xl hover:shadow-blue-500/40 hover:scale-105;
     background-image: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
   }
   
-  .card-hover {
-    @apply hover:shadow-lg transition-all duration-700 cursor-pointer group;
+  .outline-button {
+    @apply px-8 py-3 text-base font-medium rounded-full border-2 border-blue-400 text-blue-600 bg-white hover:bg-blue-50 transition-all duration-300;
   }
   
+  /* Card Classes */
+  .card-hover {
+    @apply hover:shadow-lg transition-all duration-700 cursor-pointer;
+  }
+  
+  .card-main {
+    @apply border-0 shadow-lg bg-white;
+  }
+  
+  .card-secondary {
+    @apply border-0 shadow-sm bg-white;
+  }
+  
+  /* Animation Classes */
   .fade-in {
     @apply transition-all duration-1000 ease-out;
   }
   
   .image-hover {
-    @apply group-hover:scale-110 transition-all duration-500 ease-out;
+    @apply transition-all duration-500 ease-out;
   }
+  
+  /* Layout Classes */
+  .container-main {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-form {
+    @apply max-w-4xl mx-auto px-4 py-8;
+  }
+  
+  .gradient-bg {
+    @apply bg-gradient-to-br from-slate-50 to-blue-50;
+  }
+  
+  .section-bg {
+    @apply bg-gray-50;
+  }
+  
+  /* Form Classes */
+  .form-input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+  
+  .form-section-spacing {
+    @apply space-y-6;
+  }
+  
+  .form-field-spacing {
+    @apply space-y-3;
+  }
+}
+
+/* Group hover effects using regular CSS */
+.group:hover .image-hover {
+  transform: scale(1.1);
+}
+
+.group:hover .group-hover-scale {
+  transform: scale(1.05);
 }
