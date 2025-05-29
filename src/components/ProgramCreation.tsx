@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -84,7 +83,7 @@ const ProgramCreation = () => {
     programName: '',
     selectedSessions: [],
     mode: 'online',
-    paymentRequired: false,
+    paymentRequired: true, // Pre-selected as true
     sessionSchedules: {},
     venueAddress: 'Leonia Holistic Destination, Bommarasipet, Shamirpet Mandal, Medchal-Malkajgiri District, Hyderabad - 500078',
     selectedVenue: predefinedVenues[0],
@@ -382,6 +381,48 @@ const ProgramCreation = () => {
                         </div>
                       </RadioGroup>
                     </div>
+
+                    <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                      <div>
+                        <Label className="text-stone-800 font-medium">Is Payment Required?</Label>
+                        <p className="text-sm text-stone-600">Enable if fees are required for this program</p>
+                      </div>
+                      <Switch
+                        checked={programData.paymentRequired}
+                        onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
+                        className="data-[state=checked]:bg-orange-500"
+                      />
+                    </div>
+
+                    {programData.paymentRequired && (
+                      <div className="space-y-6 bg-orange-50/30 rounded-2xl p-6 border border-orange-200/50">
+                        <h4 className="text-lg font-medium text-stone-800">Payment Configuration</h4>
+                        <div className="grid grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <Label htmlFor="hdbFee" className="text-stone-800 font-medium">HDB Fee (₹)</Label>
+                            <Input
+                              id="hdbFee"
+                              type="number"
+                              value={programData.hdbFee}
+                              onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
+                              className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                              placeholder="Enter HDB fee amount"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="msdFee" className="text-stone-800 font-medium">MSD Fee (₹)</Label>
+                            <Input
+                              id="msdFee"
+                              type="number"
+                              value={programData.msdFee}
+                              onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
+                              className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                              placeholder="Enter MSD fee amount"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
