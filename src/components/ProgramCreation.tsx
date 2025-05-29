@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -77,8 +77,8 @@ const programTypes: ProgramType[] = [
 
 const ProgramCreation = () => {
   const [currentStep, setCurrentStep] = useState(0);
-  const [showPreview, setShowPreview] = useState(false);
   const [showFormPreview, setShowFormPreview] = useState(false);
+  const [activeSection, setActiveSection] = useState(0); // 0: Program Type, 1: Program Basics, 2: Schedule & Logistics
   const [programData, setProgramData] = useState<ProgramData>({
     programType: null,
     programName: '',
@@ -104,6 +104,30 @@ const ProgramCreation = () => {
     ]
   });
 
+  // Scroll tracking for active section
+  useEffect(() => {
+    const handleScroll = () => {
+      const programTypeSection = document.getElementById('program-type-section');
+      const programBasicsSection = document.getElementById('program-basics-section');
+      const scheduleSection = document.getElementById('schedule-section');
+      
+      if (programTypeSection && programBasicsSection && scheduleSection) {
+        const scrollY = window.scrollY + 200; // offset for better UX
+        
+        if (scrollY < programBasicsSection.offsetTop) {
+          setActiveSection(0);
+        } else if (scrollY < scheduleSection.offsetTop) {
+          setActiveSection(1);
+        } else {
+          setActiveSection(2);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const updateProgramData = (updates: Partial<ProgramData>) => {
     setProgramData(prev => ({ ...prev, ...updates }));
   };
@@ -115,26 +139,11 @@ const ProgramCreation = () => {
     });
   };
 
-  const addFormField = (type: FormField['type']) => {
-    const newField: FormField = {
-      id: Date.now().toString(),
-      type,
-      label: `New ${type} field`,
-      mandatory: false,
-      helperText: '',
-      options: type === 'dropdown' ? ['Option 1', 'Option 2'] : undefined
-    };
-    updateProgramData({
-      formFields: [...programData.formFields, newField]
-    });
-  };
-
-  const updateFormField = (id: string, updates: Partial<FormField>) => {
-    updateProgramData({
-      formFields: programData.formFields.map(field => 
-        field.id === id ? { ...field, ...updates } : field
-      )
-    });
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const calculateEndDate = (startDate: string, sessionType: string) => {
@@ -172,16 +181,26 @@ const ProgramCreation = () => {
     });
   };
 
-  const getStepTitle = () => {
-    if (showFormPreview) return 'Preview Registration Form';
-    switch (currentStep) {
-      case 0: return 'Program Creation';
-      case 1: return 'Program Basics';
-      case 2: return 'Schedule & Logistics';
-      case 3: return 'Registration Layout & Settings';
-      case 4: return 'Registration Form Builder';
-      default: return 'Create a New Program';
-    }
+  const addFormField = (type: FormField['type']) => {
+    const newField: FormField = {
+      id: Date.now().toString(),
+      type,
+      label: `New ${type} field`,
+      mandatory: false,
+      helperText: '',
+      options: type === 'dropdown' ? ['Option 1', 'Option 2'] : undefined
+    };
+    updateProgramData({
+      formFields: [...programData.formFields, newField]
+    });
+  };
+
+  const updateFormField = (id: string, updates: Partial<FormField>) => {
+    updateProgramData({
+      formFields: programData.formFields.map(field => 
+        field.id === id ? { ...field, ...updates } : field
+      )
+    });
   };
 
   if (showFormPreview) {
@@ -190,7 +209,6 @@ const ProgramCreation = () => {
         programData={programData}
         onBack={() => setShowFormPreview(false)}
         onProceed={() => {
-          // Handle final save & publish
           console.log('Proceeding with form as-is');
         }}
         onEditForm={() => {
@@ -201,65 +219,62 @@ const ProgramCreation = () => {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
-      {/* Header with Progress */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '50px' }}>
-        <div className="max-w-5xl mx-auto flex items-center" style={{ paddingLeft: '10px' }}>
-          <h1 className="text-2xl font-light text-stone-800">{getStepTitle()}</h1>
-        </div>
-      </div>
-
-      {/* Progress Steps */}
-      {currentStep > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm border-b border-stone-200/30 px-6 py-4">
-          <div className="max-w-5xl mx-auto">
-            <div className="flex items-center space-x-4">
-              {[1, 2, 3, 4].map((step) => (
-                <div key={step} className="flex items-center">
-                  <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300",
-                    currentStep >= step 
-                      ? "bg-gradient-to-r from-orange-300 to-amber-400 text-white shadow-lg" 
-                      : "bg-stone-100 text-stone-500"
-                  )}>
-                    {step}
-                  </div>
-                  {step < 4 && (
-                    <div className={cn(
-                      "w-12 h-0.5 mx-2 transition-all duration-300",
-                      currentStep > step ? "bg-gradient-to-r from-orange-300 to-amber-400" : "bg-stone-200"
-                    )} />
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="flex space-x-8 mt-2">
-              <span className={cn("text-sm", currentStep === 1 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                Program Basics
-              </span>
-              <span className={cn("text-sm", currentStep === 2 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                Schedule & Logistics
-              </span>
-              <span className={cn("text-sm", currentStep === 3 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                Layout & Settings
-              </span>
-              <span className={cn("text-sm", currentStep === 4 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                Form Builder
-              </span>
-            </div>
+  // Combined page view (steps 0-2)
+  if (currentStep < 3) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
+        {/* Fixed Header */}
+        <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-40" style={{ height: '66px' }}>
+          <div className="max-w-[1200px] mx-auto flex items-center h-full" style={{ paddingLeft: '10px' }}>
+            <h1 className="text-2xl font-light text-stone-800">Program Creation</h1>
           </div>
         </div>
-      )}
 
-      {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
-          <div className="p-8">
-            {/* Step 0: Program Type Selection */}
-            {currentStep === 0 && (
-              <div className="space-y-8 animate-fade-in">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+        <div className="flex" style={{ marginTop: '66px' }}>
+          {/* Left Vertical Stepper */}
+          <div className="w-64 bg-white/80 backdrop-blur-sm border-r border-stone-200/30 fixed left-0 top-16 bottom-0 p-6">
+            <div className="space-y-6">
+              <div 
+                className={cn(
+                  "flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all",
+                  activeSection === 1 ? "bg-orange-100 text-orange-800" : "text-stone-600 hover:bg-stone-50"
+                )}
+                onClick={() => scrollToSection('program-basics-section')}
+              >
+                <div className={cn(
+                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
+                  activeSection === 1 ? "bg-orange-500 text-white" : "bg-stone-200 text-stone-600"
+                )}>
+                  1
+                </div>
+                <span className="font-medium">Program Basics</span>
+              </div>
+              
+              <div 
+                className={cn(
+                  "flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all",
+                  activeSection === 2 ? "bg-orange-100 text-orange-800" : "text-stone-600 hover:bg-stone-50"
+                )}
+                onClick={() => scrollToSection('schedule-section')}
+              >
+                <div className={cn(
+                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
+                  activeSection === 2 ? "bg-orange-500 text-white" : "bg-stone-200 text-stone-600"
+                )}>
+                  2
+                </div>
+                <span className="font-medium">Schedule & Logistics</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1 ml-64">
+            <div className="max-w-[1200px] mx-auto px-6 py-8">
+              
+              {/* Program Type Selection Section */}
+              <section id="program-type-section" className="mb-16">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
                   {programTypes.map((type) => {
                     const IconComponent = type.icon;
                     const isSelected = programData.programType?.id === type.id;
@@ -287,9 +302,9 @@ const ProgramCreation = () => {
                 </div>
                 
                 {programData.programType && (
-                  <div className="flex justify-center mt-8">
+                  <div className="flex justify-start mt-8">
                     <Button
-                      onClick={() => setCurrentStep(1)}
+                      onClick={() => scrollToSection('program-basics-section')}
                       className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg px-8"
                     >
                       Next
@@ -297,264 +312,252 @@ const ProgramCreation = () => {
                     </Button>
                   </div>
                 )}
-              </div>
-            )}
+              </section>
 
-            {/* Step 1: Program Basics */}
-            {currentStep === 1 && (
-              <div className="space-y-8 animate-fade-in">
-                {/* Banner Section */}
-                <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200/50">
-                  <p className="text-stone-800 font-medium">
-                    You've selected {programData.programType?.name}
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="programName" className="text-stone-800 font-medium">Program Name *</Label>
-                  <Input
-                    id="programName"
-                    value={programData.programName}
-                    onChange={(e) => updateProgramData({ programName: e.target.value })}
-                    className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
-                    placeholder="Enter program name"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <Label className="text-stone-800 font-medium">Sessions</Label>
-                  <div className="grid grid-cols-2 gap-4">
-                    {programData.programType?.defaultSessions.map((session) => (
-                      <div key={session} className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                        <Checkbox
-                          id={session}
-                          checked={programData.selectedSessions.includes(session)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              updateProgramData({
-                                selectedSessions: [...programData.selectedSessions, session]
-                              });
-                            } else {
-                              updateProgramData({
-                                selectedSessions: programData.selectedSessions.filter(s => s !== session)
-                              });
-                            }
-                          }}
-                          className="border-orange-300 data-[state=checked]:bg-orange-500"
-                        />
-                        <Label htmlFor={session} className="text-stone-800 font-medium">{session}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <Label className="text-stone-800 font-medium">Mode of Program</Label>
-                  <RadioGroup
-                    value={programData.mode}
-                    onValueChange={(value: 'online' | 'offline' | 'hybrid') => updateProgramData({ mode: value })}
-                    className="flex space-x-8"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="online" id="online" className="border-orange-300 text-orange-600" />
-                      <Label htmlFor="online" className="text-stone-800">Online</Label>
+              {/* Program Basics Section */}
+              <section id="program-basics-section" className="mb-16">
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8">
+                  
+                  {/* Banner Section */}
+                  {programData.programType && (
+                    <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200/50 mb-8">
+                      <p className="text-stone-800 font-medium">
+                        You've selected {programData.programType?.name}
+                      </p>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="offline" id="offline" className="border-orange-300 text-orange-600" />
-                      <Label htmlFor="offline" className="text-stone-800">Offline</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="hybrid" id="hybrid" className="border-orange-300 text-orange-600" />
-                      <Label htmlFor="hybrid" className="text-stone-800">Hybrid</Label>
-                    </div>
-                  </RadioGroup>
-                </div>
-              </div>
-            )}
+                  )}
 
-            {/* Step 2: Schedule & Logistics */}
-            {currentStep === 2 && (
-              <div className="space-y-8 animate-fade-in">
-                
-                <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-stone-800">Session Scheduler</h3>
-                  {programData.selectedSessions.map((session) => (
-                    <Card key={session} className="border-stone-200/50 bg-stone-50/30">
-                      <CardContent className="p-6">
-                        <h4 className="font-medium text-stone-800 mb-4">{session}</h4>
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                          <div className="space-y-2">
-                            <Label className="text-stone-800">Start Date</Label>
-                            <Input
-                              type="date"
-                              value={programData.sessionSchedules[session]?.startDate || ''}
-                              onChange={(e) => {
-                                const startDate = e.target.value;
-                                const endDate = calculateEndDate(startDate, session);
-                                updateProgramData({
-                                  sessionSchedules: {
-                                    ...programData.sessionSchedules,
-                                    [session]: { 
-                                      ...programData.sessionSchedules[session],
-                                      startDate, 
-                                      endDate 
-                                    }
-                                  }
-                                });
-                              }}
-                              className="rounded-2xl border-stone-200 bg-white/80"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label className="text-stone-800 flex items-center gap-2">
-                              End Date
-                              <Info className="w-4 h-4 text-stone-500" />
-                            </Label>
-                            <Input
-                              type="date"
-                              value={programData.sessionSchedules[session]?.endDate || ''}
-                              disabled
-                              className="rounded-2xl border-stone-200 bg-stone-50"
-                            />
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label className="text-stone-800">Check-in Time</Label>
-                            <Input
-                              type="time"
-                              value={programData.sessionSchedules[session]?.checkInTime || ''}
-                              onChange={(e) => {
-                                const checkInTime = e.target.value;
-                                const checkOutTime = calculateCheckOutTime(checkInTime);
-                                updateProgramData({
-                                  sessionSchedules: {
-                                    ...programData.sessionSchedules,
-                                    [session]: { 
-                                      ...programData.sessionSchedules[session],
-                                      checkInTime, 
-                                      checkOutTime 
-                                    }
-                                  }
-                                });
-                              }}
-                              className="rounded-2xl border-stone-200 bg-white/80"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label className="text-stone-800 flex items-center gap-2">
-                              Check-out Time
-                              <Info className="w-4 h-4 text-stone-500" />
-                            </Label>
-                            <Input
-                              type="time"
-                              value={programData.sessionSchedules[session]?.checkOutTime || ''}
-                              disabled
-                              className="rounded-2xl border-stone-200 bg-stone-50"
-                            />
-                            <p className="text-xs text-stone-500">Auto-calculated (6 hours after check-in)</p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
-                  <div className="space-y-6 animate-fade-in">
+                  <div className="space-y-8">
                     <div className="space-y-2">
-                      <Label className="text-stone-800 font-medium">Venue Address</Label>
-                      <Select value={programData.selectedVenue} onValueChange={handleVenueChange}>
-                        <SelectTrigger className="rounded-2xl border-stone-200 bg-white/80">
-                          <SelectValue placeholder="Select venue" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white border border-stone-200 shadow-lg rounded-xl z-50">
-                          {predefinedVenues.map((venue) => (
-                            <SelectItem key={venue} value={venue} className="hover:bg-stone-50">
-                              {venue === 'Custom' ? 'Custom Address' : venue}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      
-                      {programData.selectedVenue === 'Custom' && (
-                        <Textarea
-                          value={programData.customVenue}
-                          onChange={(e) => handleCustomVenueChange(e.target.value)}
-                          className="rounded-2xl border-stone-200 bg-white/80 mt-2"
-                          placeholder="Enter custom venue address"
-                          rows={3}
-                        />
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                      <div>
-                        <Label className="text-stone-800 font-medium">Is Travel Required?</Label>
-                        <p className="text-sm text-stone-600">Enable if transportation is needed</p>
-                      </div>
-                      <Switch
-                        checked={programData.travelRequired}
-                        onCheckedChange={(checked) => updateProgramData({ travelRequired: checked })}
-                        className="data-[state=checked]:bg-orange-500"
+                      <Label htmlFor="programName" className="text-stone-800 font-medium">Program Name *</Label>
+                      <Input
+                        id="programName"
+                        value={programData.programName}
+                        onChange={(e) => updateProgramData({ programName: e.target.value })}
+                        className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                        placeholder="Enter program name"
                       />
                     </div>
-                  </div>
-                )}
 
-                <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                  <div>
-                    <Label htmlFor="payment" className="text-stone-800 font-medium">Is Payment Required?</Label>
-                    <p className="text-sm text-stone-600">Enable if participants need to pay</p>
+                    <div className="space-y-4">
+                      <Label className="text-stone-800 font-medium">Sessions</Label>
+                      <div className="grid grid-cols-2 gap-4">
+                        {programData.programType?.defaultSessions.map((session) => (
+                          <div key={session} className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                            <Checkbox
+                              id={session}
+                              checked={programData.selectedSessions.includes(session)}
+                              onCheckedChange={(checked) => {
+                                if (checked) {
+                                  updateProgramData({
+                                    selectedSessions: [...programData.selectedSessions, session]
+                                  });
+                                } else {
+                                  updateProgramData({
+                                    selectedSessions: programData.selectedSessions.filter(s => s !== session)
+                                  });
+                                }
+                              }}
+                              className="border-orange-300 data-[state=checked]:bg-orange-500"
+                            />
+                            <Label htmlFor={session} className="text-stone-800 font-medium">{session}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <Label className="text-stone-800 font-medium">Mode of Program</Label>
+                      <RadioGroup
+                        value={programData.mode}
+                        onValueChange={(value: 'online' | 'offline' | 'hybrid') => updateProgramData({ mode: value })}
+                        className="flex space-x-8"
+                      >
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="online" id="online" className="border-orange-300 text-orange-600" />
+                          <Label htmlFor="online" className="text-stone-800">Online</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="offline" id="offline" className="border-orange-300 text-orange-600" />
+                          <Label htmlFor="offline" className="text-stone-800">Offline</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="hybrid" id="hybrid" className="border-orange-300 text-orange-600" />
+                          <Label htmlFor="hybrid" className="text-stone-800">Hybrid</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
                   </div>
-                  <Switch
-                    id="payment"
-                    checked={programData.paymentRequired}
-                    onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
-                    className="data-[state=checked]:bg-orange-500"
-                  />
                 </div>
+              </section>
 
-                {programData.paymentRequired && (
-                  <div className="space-y-6 animate-fade-in">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-stone-800 font-medium">HDB Fee</Label>
-                        <Input
-                          type="number"
-                          value={programData.hdbFee}
-                          onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
-                          className="rounded-2xl border-stone-200 bg-white/80"
-                          placeholder="0.00"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-stone-800 font-medium">MSD Fee</Label>
-                        <Input
-                          type="number"
-                          value={programData.msdFee}
-                          onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
-                          className="rounded-2xl border-stone-200 bg-white/80"
-                          placeholder="0.00"
-                        />
-                      </div>
+              {/* Schedule & Logistics Section */}
+              <section id="schedule-section" className="mb-16">
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8">
+                  <div className="space-y-8">
+                    
+                    <div className="space-y-6">
+                      <h3 className="text-lg font-medium text-stone-800">Session Scheduler</h3>
+                      {programData.selectedSessions.map((session) => (
+                        <Card key={session} className="border-stone-200/50 bg-stone-50/30">
+                          <CardContent className="p-6">
+                            <h4 className="font-medium text-stone-800 mb-4">{session}</h4>
+                            <div className="grid grid-cols-2 gap-4 mb-4">
+                              <div className="space-y-2">
+                                <Label className="text-stone-800">Start Date</Label>
+                                <Input
+                                  type="date"
+                                  value={programData.sessionSchedules[session]?.startDate || ''}
+                                  onChange={(e) => {
+                                    const startDate = e.target.value;
+                                    const endDate = calculateEndDate(startDate, session);
+                                    updateProgramData({
+                                      sessionSchedules: {
+                                        ...programData.sessionSchedules,
+                                        [session]: { 
+                                          ...programData.sessionSchedules[session],
+                                          startDate, 
+                                          endDate 
+                                        }
+                                      }
+                                    });
+                                  }}
+                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-stone-800 flex items-center gap-2">
+                                  End Date
+                                  <Info className="w-4 h-4 text-stone-500" />
+                                </Label>
+                                <Input
+                                  type="date"
+                                  value={programData.sessionSchedules[session]?.endDate || ''}
+                                  disabled
+                                  className="rounded-2xl border-stone-200 bg-stone-50"
+                                />
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label className="text-stone-800">Check-in Time</Label>
+                                <Input
+                                  type="time"
+                                  value={programData.sessionSchedules[session]?.checkInTime || ''}
+                                  onChange={(e) => {
+                                    const checkInTime = e.target.value;
+                                    const checkOutTime = calculateCheckOutTime(checkInTime);
+                                    updateProgramData({
+                                      sessionSchedules: {
+                                        ...programData.sessionSchedules,
+                                        [session]: { 
+                                          ...programData.sessionSchedules[session],
+                                          checkInTime, 
+                                          checkOutTime 
+                                        }
+                                      }
+                                    });
+                                  }}
+                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label className="text-stone-800 flex items-center gap-2">
+                                  Check-out Time
+                                  <Info className="w-4 h-4 text-stone-500" />
+                                </Label>
+                                <Input
+                                  type="time"
+                                  value={programData.sessionSchedules[session]?.checkOutTime || ''}
+                                  disabled
+                                  className="rounded-2xl border-stone-200 bg-stone-50"
+                                />
+                                <p className="text-xs text-stone-500">Auto-calculated (6 hours after check-in)</p>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
                     </div>
 
-                    <div className="space-y-2">
-                      <Label className="text-stone-800 font-medium">Refund Policy</Label>
-                      <Textarea
-                        value={programData.refundPolicy}
-                        onChange={(e) => updateProgramData({ refundPolicy: e.target.value })}
-                        className="rounded-2xl border-stone-200 bg-white/80"
-                        placeholder="Describe the refund policy..."
-                        rows={3}
-                      />
+                    {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
+                      <div className="space-y-6">
+                        <div className="space-y-2">
+                          <Label className="text-stone-800 font-medium">Venue Address</Label>
+                          <Select value={programData.selectedVenue} onValueChange={handleVenueChange}>
+                            <SelectTrigger className="rounded-2xl border-stone-200 bg-white/80">
+                              <SelectValue placeholder="Select venue" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-white border border-stone-200 shadow-lg rounded-xl z-50">
+                              {predefinedVenues.map((venue) => (
+                                <SelectItem key={venue} value={venue} className="hover:bg-stone-50">
+                                  {venue === 'Custom' ? 'Custom Address' : venue}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          
+                          {programData.selectedVenue === 'Custom' && (
+                            <Textarea
+                              value={programData.customVenue}
+                              onChange={(e) => handleCustomVenueChange(e.target.value)}
+                              className="rounded-2xl border-stone-200 bg-white/80 mt-2"
+                              placeholder="Enter custom venue address"
+                              rows={3}
+                            />
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                          <div>
+                            <Label className="text-stone-800 font-medium">Is Travel Required?</Label>
+                            <p className="text-sm text-stone-600">Enable if transportation is needed</p>
+                          </div>
+                          <Switch
+                            checked={programData.travelRequired}
+                            onCheckedChange={(checked) => updateProgramData({ travelRequired: checked })}
+                            className="data-[state=checked]:bg-orange-500"
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={() => setCurrentStep(3)}
+                        className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg px-8"
+                      >
+                        Continue to Layout & Settings
+                        <ChevronRight className="w-4 h-4 ml-2" />
+                      </Button>
                     </div>
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
+  // Steps 3 and 4 remain unchanged
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
+      {/* Header with Progress */}
+      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
+        <div className="max-w-5xl mx-auto flex items-center" style={{ paddingLeft: '10px' }}>
+          <h1 className="text-2xl font-light text-stone-800">
+            {currentStep === 3 ? 'Registration Layout & Settings' : 'Registration Form Builder'}
+          </h1>
+        </div>
+      </div>
+
+      {/* Main Content for Steps 3-4 */}
+      <div className="max-w-5xl mx-auto px-6 py-8">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
+          <div className="p-8">
+            
             {/* Step 3: Registration Layout & Settings */}
             {currentStep === 3 && (
               <div className="space-y-8 animate-fade-in">
@@ -617,7 +620,7 @@ const ProgramCreation = () => {
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium text-stone-800">Registration Form Builder</h3>
                   <Button
-                    onClick={() => setShowPreview(true)}
+                    onClick={() => setShowFormPreview(true)}
                     variant="outline"
                     className="rounded-2xl border-orange-200 text-orange-700 hover:bg-orange-50"
                   >
@@ -686,20 +689,17 @@ const ProgramCreation = () => {
             )}
           </div>
 
-          {/* Footer Navigation */}
+          {/* Footer Navigation for Steps 3-4 */}
           <div className="bg-gradient-to-r from-stone-50 to-orange-50/50 px-8 py-6 border-t border-stone-200/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                {currentStep > 0 && (
-                  <Button
-                    onClick={() => setCurrentStep(currentStep - 1)}
-                    variant="outline"
-                    className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
-                  >
-                    <ChevronLeft className="w-4 h-4 mr-2" />
-                    Back
-                  </Button>
-                )}
+                <Button
+                  onClick={() => setCurrentStep(currentStep === 3 ? 0 : currentStep - 1)}
+                  variant="outline"
+                  className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
+                >
+                  Back
+                </Button>
                 <Button
                   variant="ghost"
                   className="text-stone-600 hover:text-stone-800 hover:bg-stone-50 rounded-2xl"
@@ -710,79 +710,24 @@ const ProgramCreation = () => {
               </div>
 
               <div>
-                {currentStep < 4 && currentStep > 0 ? (
+                {currentStep === 3 ? (
                   <Button
-                    onClick={() => {
-                      if (currentStep === 3) {
-                        setShowFormPreview(true);
-                      } else {
-                        setCurrentStep(currentStep + 1);
-                      }
-                    }}
+                    onClick={() => setCurrentStep(4)}
                     className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
                   >
-                    {currentStep === 2 ? 'Continue to Layout' : currentStep === 3 ? 'Preview Generated Form' : 'Continue to Schedule'}
+                    Continue to Form Builder
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
-                ) : currentStep === 4 ? (
+                ) : (
                   <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white shadow-lg">
                     Save & Publish Program
                   </Button>
-                ) : null}
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Form Preview Modal */}
-      {showPreview && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto">
-            <div className="p-6 border-b border-stone-200">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-stone-800">Registration Form Preview</h3>
-                <Button
-                  onClick={() => setShowPreview(false)}
-                  variant="ghost"
-                  className="text-stone-600 hover:text-stone-800"
-                >
-                  ✕
-                </Button>
-              </div>
-            </div>
-            <div className="p-6 space-y-4">
-              {programData.formFields.map((field) => (
-                <div key={field.id} className="space-y-2">
-                  <Label className="text-stone-800 flex items-center gap-1">
-                    {field.label}
-                    {field.mandatory && <span className="text-red-500">*</span>}
-                  </Label>
-                  {field.helperText && (
-                    <p className="text-sm text-stone-600">{field.helperText}</p>
-                  )}
-                  {field.type === 'text' && <Input className="rounded-2xl border-stone-200" placeholder={`Enter ${field.label.toLowerCase()}`} />}
-                  {field.type === 'date' && <Input type="date" className="rounded-2xl border-stone-200" />}
-                  {field.type === 'file' && <Input type="file" className="rounded-2xl border-stone-200" />}
-                  {field.type === 'dropdown' && (
-                    <Select>
-                      <SelectTrigger className="rounded-2xl border-stone-200">
-                        <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {field.options?.map((option, idx) => (
-                          <SelectItem key={idx} value={option}>{option}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
-                  {field.type === 'paragraph' && <Textarea className="rounded-2xl border-stone-200" placeholder={`Enter ${field.label.toLowerCase()}`} />}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
