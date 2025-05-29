@@ -219,7 +219,7 @@ const ProgramCreation = () => {
         }}
         onEditForm={() => {
           setShowFormPreview(false);
-          setCurrentStep(4);
+          setCurrentStep(3); // Go directly to form builder (step 3 instead of step 4)
         }}
       />
     );
@@ -843,164 +843,105 @@ const ProgramCreation = () => {
     );
   }
 
-  // Steps 4 and 5 (adjusted numbering) - Layout & Settings and Form Builder
+  // Step 3: Registration Form Builder (previously step 4)
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
       {/* Header with Progress - Made Sticky */}
       <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
         <div className="max-w-5xl mx-auto flex items-center" style={{ paddingLeft: '10px' }}>
-          <h1 className="text-2xl font-light text-stone-800">
-            {currentStep === 3 ? 'Registration Layout & Settings' : 'Registration Form Builder'}
-          </h1>
+          <h1 className="text-2xl font-light text-stone-800">Registration Form Builder</h1>
         </div>
       </div>
 
-      {/* Main Content for Steps 3-4 */}
+      {/* Main Content for Form Builder */}
       <div className="max-w-5xl mx-auto px-6 py-8">
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
           <div className="p-8">
             
-            {/* Step 3: Registration Layout & Settings */}
-            {currentStep === 3 && (
-              <div className="space-y-8 animate-fade-in">
-                
-                <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-stone-800">Choose Registration Layout</h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    {[
-                      { id: 'single-column', name: 'Single Column', description: 'Traditional stacked form layout' },
-                      { id: 'two-column', name: 'Two Column', description: 'Personal info on left, other details on right' },
-                      { id: 'question-by-question', name: 'Question-by-Question', description: 'Progressive form with one question at a time' }
-                    ].map((layout) => (
-                      <Card 
-                        key={layout.id}
-                        className={cn(
-                          "cursor-pointer border-stone-200/50 transition-all duration-300 hover:shadow-lg",
-                          programData.layoutStyle === layout.id ? "border-orange-300 bg-orange-50/50" : "hover:border-orange-200"
-                        )}
-                        onClick={() => updateProgramData({ layoutStyle: layout.id as any })}
-                      >
-                        <CardContent className="p-6 text-center">
-                          <h4 className="font-medium text-stone-800 mb-2">{layout.name}</h4>
-                          <p className="text-sm text-stone-600">{layout.description}</p>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-stone-800">Choose User Context</h3>
-                  <RadioGroup
-                    value={programData.userType}
-                    onValueChange={(value: 'new' | 'existing') => updateProgramData({ userType: value })}
-                    className="space-y-4"
-                  >
-                    <div className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                      <RadioGroupItem value="new" id="new-user" className="border-orange-300 text-orange-600" />
-                      <div>
-                        <Label htmlFor="new-user" className="text-stone-800 font-medium">New User</Label>
-                        <p className="text-sm text-stone-600">Show blank form for first-time participants</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                      <RadioGroupItem value="existing" id="existing-user" className="border-orange-300 text-orange-600" />
-                      <div>
-                        <Label htmlFor="existing-user" className="text-stone-800 font-medium">Existing User</Label>
-                        <p className="text-sm text-stone-600">Prefill known fields like name, email, contact</p>
-                      </div>
-                    </div>
-                  </RadioGroup>
-                </div>
+            {/* Form Builder Content */}
+            <div className="space-y-8 animate-fade-in">
+              
+              <div className="flex items-center justify-between">
+                <h3 className="text-lg font-medium text-stone-800">Registration Form Builder</h3>
+                <Button
+                  onClick={() => setShowFormPreview(true)}
+                  variant="outline"
+                  className="rounded-2xl border-orange-200 text-orange-700 hover:bg-orange-50"
+                >
+                  <Eye className="w-4 h-4 mr-2" />
+                  Preview Form
+                </Button>
               </div>
-            )}
 
-            {/* Step 4: Registration Form Builder */}
-            {currentStep === 4 && (
-              <div className="space-y-8 animate-fade-in">
-                
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-stone-800">Registration Form Builder</h3>
-                  <Button
-                    onClick={() => setShowFormPreview(true)}
-                    variant="outline"
-                    className="rounded-2xl border-orange-200 text-orange-700 hover:bg-orange-50"
-                  >
-                    <Eye className="w-4 h-4 mr-2" />
-                    Preview Form
-                  </Button>
-                </div>
-
-                <div className="space-y-4">
-                  {programData.formFields.map((field) => (
-                    <Card key={field.id} className="border-stone-200/50 bg-stone-50/30">
-                      <CardContent className="p-6">
-                        <div className="grid grid-cols-3 gap-4 items-start">
-                          <div className="space-y-2">
-                            <Label className="text-stone-800">Field Label</Label>
-                            <Input
-                              value={field.label}
-                              onChange={(e) => updateFormField(field.id, { label: e.target.value })}
-                              className="rounded-2xl border-stone-200 bg-white/80"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label className="text-stone-800">Helper Text</Label>
-                            <Input
-                              value={field.helperText}
-                              onChange={(e) => updateFormField(field.id, { helperText: e.target.value })}
-                              className="rounded-2xl border-stone-200 bg-white/80"
-                              placeholder="Optional helper text"
-                            />
-                          </div>
-                          <div className="flex items-center justify-between pt-6">
-                            <div className="flex items-center space-x-2">
-                              <Switch
-                                checked={field.mandatory}
-                                onCheckedChange={(checked) => updateFormField(field.id, { mandatory: checked })}
-                                className="data-[state=checked]:bg-orange-500"
-                              />
-                              <Label className="text-stone-800 text-sm">Mandatory</Label>
-                            </div>
-                            <span className="text-xs text-orange-700 bg-orange-100 px-2 py-1 rounded-full">
-                              {field.type}
-                            </span>
-                          </div>
+              <div className="space-y-4">
+                {programData.formFields.map((field) => (
+                  <Card key={field.id} className="border-stone-200/50 bg-stone-50/30">
+                    <CardContent className="p-6">
+                      <div className="grid grid-cols-3 gap-4 items-start">
+                        <div className="space-y-2">
+                          <Label className="text-stone-800">Field Label</Label>
+                          <Input
+                            value={field.label}
+                            onChange={(e) => updateFormField(field.id, { label: e.target.value })}
+                            className="rounded-2xl border-stone-200 bg-white/80"
+                          />
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-
-                <div className="flex items-center space-x-4">
-                  <Select onValueChange={(value) => addFormField(value as FormField['type'])}>
-                    <SelectTrigger className="w-48 rounded-2xl border-orange-200 bg-white/80">
-                      <Plus className="w-4 h-4 mr-2" />
-                      <SelectValue placeholder="Add New Field" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="text">Text Field</SelectItem>
-                      <SelectItem value="date">Date Field</SelectItem>
-                      <SelectItem value="file">File Upload</SelectItem>
-                      <SelectItem value="dropdown">Dropdown</SelectItem>
-                      <SelectItem value="paragraph">Paragraph</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                        <div className="space-y-2">
+                          <Label className="text-stone-800">Helper Text</Label>
+                          <Input
+                            value={field.helperText}
+                            onChange={(e) => updateFormField(field.id, { helperText: e.target.value })}
+                            className="rounded-2xl border-stone-200 bg-white/80"
+                            placeholder="Optional helper text"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between pt-6">
+                          <div className="flex items-center space-x-2">
+                            <Switch
+                              checked={field.mandatory}
+                              onCheckedChange={(checked) => updateFormField(field.id, { mandatory: checked })}
+                              className="data-[state=checked]:bg-orange-500"
+                            />
+                            <Label className="text-stone-800 text-sm">Mandatory</Label>
+                          </div>
+                          <span className="text-xs text-orange-700 bg-orange-100 px-2 py-1 rounded-full">
+                            {field.type}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-            )}
+
+              <div className="flex items-center space-x-4">
+                <Select onValueChange={(value) => addFormField(value as FormField['type'])}>
+                  <SelectTrigger className="w-48 rounded-2xl border-orange-200 bg-white/80">
+                    <Plus className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Add New Field" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="text">Text Field</SelectItem>
+                    <SelectItem value="date">Date Field</SelectItem>
+                    <SelectItem value="file">File Upload</SelectItem>
+                    <SelectItem value="dropdown">Dropdown</SelectItem>
+                    <SelectItem value="paragraph">Paragraph</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
           </div>
 
-          {/* Footer Navigation for Steps 3-4 */}
+          {/* Footer Navigation for Form Builder */}
           <div className="bg-gradient-to-r from-stone-50 to-orange-50/50 px-8 py-6 border-t border-stone-200/50">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Button
-                  onClick={() => setCurrentStep(currentStep === 3 ? 2.5 : currentStep - 1)}
+                  onClick={() => setShowFormPreview(true)}
                   variant="outline"
                   className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
                 >
-                  Back
+                  Back to Preview
                 </Button>
                 <Button
                   variant="ghost"
@@ -1012,19 +953,9 @@ const ProgramCreation = () => {
               </div>
 
               <div>
-                {currentStep === 3 ? (
-                  <Button
-                    onClick={() => setCurrentStep(4)}
-                    className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
-                  >
-                    Continue to Form Builder
-                    <ChevronRight className="w-4 h-4 ml-2" />
-                  </Button>
-                ) : (
-                  <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white shadow-lg">
-                    Save & Publish Program
-                  </Button>
-                )}
+                <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white shadow-lg">
+                  Save & Publish Program
+                </Button>
               </div>
             </div>
           </div>
