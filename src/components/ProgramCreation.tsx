@@ -211,9 +211,15 @@ const ProgramCreation = () => {
   };
 
   if (showFormPreview) {
+    // Convert ProgramType to string for PreviewUserForm compatibility
+    const previewProgramData = {
+      ...programData,
+      programType: programData.programType?.name || ''
+    };
+    
     return (
       <PreviewUserForm
-        programData={programData}
+        programData={previewProgramData}
         onBack={() => setShowFormPreview(false)}
         onEditFormFields={() => {
           setShowFormPreview(false);
