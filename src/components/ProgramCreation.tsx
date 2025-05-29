@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart, CheckCircle, Edit, Home } from 'lucide-react';
+import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart, CheckCircle, Edit, Home, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,7 +8,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import RegistrationFormPreview from './RegistrationFormPreview';
 import PreviewUserForm from './PreviewUserForm';
@@ -20,6 +20,23 @@ interface ProgramType {
   icon: React.ComponentType<any>;
   defaultSessions: string[];
   defaultDuration: number;
+}
+
+interface ValidationRule {
+  id: string;
+  name: string;
+  description: string;
+}
+
+interface FormField {
+  id: string;
+  type: 'text' | 'date' | 'file' | 'dropdown' | 'paragraph';
+  label: string;
+  mandatory: boolean;
+  helperText: string;
+  options?: string[];
+  validationRules: string[];
+  expanded?: boolean;
 }
 
 interface ProgramData {
@@ -48,20 +65,22 @@ interface ProgramData {
   maxSeats: number;
 }
 
-interface FormField {
-  id: string;
-  type: 'text' | 'date' | 'file' | 'dropdown' | 'paragraph';
-  label: string;
-  mandatory: boolean;
-  helperText: string;
-  options?: string[];
-}
-
 const predefinedVenues = [
   'Leonia Holistic Destination, Bommarasipet, Shamirpet Mandal, Medchal-Malkajgiri District, Hyderabad - 500078',
   'Ramoji Film City, Anajpur, Hayathnagar Mandal, Ranga Reddy District, Hyderabad - 501512',
   'The Westin Hyderabad Mindspace, HITEC City, Madhapur, Hyderabad - 500081',
   'Custom'
+];
+
+const validationRules: ValidationRule[] = [
+  { id: 'text-only', name: 'Text only', description: 'Letters and spaces only' },
+  { id: 'number-only', name: 'Number only', description: 'Integers or decimals only' },
+  { id: 'email-format', name: 'Email format', description: 'Valid email address format' },
+  { id: 'phone-format', name: 'Phone number', description: 'Valid phone number format' },
+  { id: 'date-format', name: 'Date format', description: 'DD/MM/YYYY format' },
+  { id: 'file-types', name: 'File validation', description: 'JPG, PNG, PDF formats only' },
+  { id: 'min-length', name: 'Minimum length', description: 'Minimum character count' },
+  { id: 'max-length', name: 'Maximum length', description: 'Maximum character count' }
 ];
 
 const programTypes: ProgramType[] = [
@@ -115,7 +134,7 @@ const ProgramCreation = () => {
     programName: 'HDB-25',
     selectedSessions: [],
     mode: 'online',
-    paymentRequired: true, // Pre-selected as true
+    paymentRequired: true,
     sessionSchedules: {},
     venueAddress: 'Leonia Holistic Destination, Bommarasipet, Shamirpet Mandal, Medchal-Malkajgiri District, Hyderabad - 500078',
     selectedVenue: predefinedVenues[0],
@@ -127,11 +146,52 @@ const ProgramCreation = () => {
     layoutStyle: 'single-column',
     userType: 'new',
     formFields: [
-      { id: '1', type: 'text', label: 'Name', mandatory: true, helperText: 'Full legal name' },
-      { id: '2', type: 'text', label: 'Email', mandatory: true, helperText: 'Primary contact email' },
-      { id: '3', type: 'text', label: 'Phone', mandatory: true, helperText: 'Contact number' },
-      { id: '4', type: 'dropdown', label: 'Gender', mandatory: false, helperText: '', options: ['Male', 'Female', 'Other', 'Prefer not to say'] },
-      { id: '5', type: 'text', label: 'Age', mandatory: false, helperText: 'Age in years' },
+      { 
+        id: '1', 
+        type: 'text', 
+        label: 'Full Name', 
+        mandatory: true, 
+        helperText: 'Please enter your full legal name', 
+        validationRules: ['text-only'],
+        expanded: false 
+      },
+      { 
+        id: '2', 
+        type: 'text', 
+        label: 'Email Address', 
+        mandatory: true, 
+        helperText: 'Primary contact email address', 
+        validationRules: ['email-format'],
+        expanded: false 
+      },
+      { 
+        id: '3', 
+        type: 'text', 
+        label: 'Phone Number', 
+        mandatory: true, 
+        helperText: 'Contact number with country code', 
+        validationRules: ['phone-format'],
+        expanded: false 
+      },
+      { 
+        id: '4', 
+        type: 'dropdown', 
+        label: 'Gender', 
+        mandatory: false, 
+        helperText: '', 
+        options: ['Male', 'Female', 'Other', 'Prefer not to say'],
+        validationRules: [],
+        expanded: false 
+      },
+      { 
+        id: '5', 
+        type: 'text', 
+        label: 'Age', 
+        mandatory: false, 
+        helperText: 'Age in years', 
+        validationRules: ['number-only'],
+        expanded: false 
+      },
     ],
     approvalRequired: false,
     registrationStartDate: '',
@@ -195,7 +255,9 @@ const ProgramCreation = () => {
       label: `New ${type} field`,
       mandatory: false,
       helperText: '',
-      options: type === 'dropdown' ? ['Option 1', 'Option 2'] : undefined
+      options: type === 'dropdown' ? ['Option 1', 'Option 2'] : undefined,
+      validationRules: [],
+      expanded: true
     };
     updateProgramData({
       formFields: [...programData.formFields, newField]
@@ -210,8 +272,35 @@ const ProgramCreation = () => {
     });
   };
 
+  const deleteFormField = (id: string) => {
+    updateProgramData({
+      formFields: programData.formFields.filter(field => field.id !== id)
+    });
+  };
+
+  const toggleFieldExpansion = (id: string) => {
+    updateFormField(id, { expanded: !programData.formFields.find(f => f.id === id)?.expanded });
+  };
+
+  const addValidationRule = (fieldId: string, ruleId: string) => {
+    const field = programData.formFields.find(f => f.id === fieldId);
+    if (field && !field.validationRules.includes(ruleId)) {
+      updateFormField(fieldId, {
+        validationRules: [...field.validationRules, ruleId]
+      });
+    }
+  };
+
+  const removeValidationRule = (fieldId: string, ruleId: string) => {
+    const field = programData.formFields.find(f => f.id === fieldId);
+    if (field) {
+      updateFormField(fieldId, {
+        validationRules: field.validationRules.filter(rule => rule !== ruleId)
+      });
+    }
+  };
+
   if (showFormPreview) {
-    // Convert ProgramType to string for PreviewUserForm compatibility
     const previewProgramData = {
       ...programData,
       programType: programData.programType?.name || ''
@@ -227,7 +316,6 @@ const ProgramCreation = () => {
         }}
         onSaveAndExit={() => {
           console.log('Saving preview and exiting');
-          // Handle save and exit logic
         }}
       />
     );
@@ -851,126 +939,262 @@ const ProgramCreation = () => {
     );
   }
 
-  // Step 3: Registration Form Builder (previously step 4)
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
-      {/* Header with Progress - Made Sticky */}
-      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
-        <div className="max-w-5xl mx-auto flex items-center" style={{ paddingLeft: '10px' }}>
-          <h1 className="text-2xl font-light text-stone-800">Registration Form Builder</h1>
+  // Step 3: Enhanced Registration Form Builder
+  if (currentStep === 3) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50/30">
+        {/* Header */}
+        <div className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-blue-100 px-6 py-4 shadow-sm">
+          <div className="max-w-5xl mx-auto flex items-center justify-between">
+            <h1 className="text-2xl font-medium text-blue-900">Registration Form Builder</h1>
+            <Button
+              onClick={() => setShowFormPreview(true)}
+              variant="outline"
+              className="border-blue-200 text-blue-700 hover:bg-blue-50 rounded-xl"
+            >
+              <Eye className="w-4 h-4 mr-2" />
+              Preview Form
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Main Content for Form Builder */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
-          <div className="p-8">
+        {/* Main Content */}
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="space-y-6">
             
-            {/* Form Builder Content */}
-            <div className="space-y-8 animate-fade-in">
-              
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium text-stone-800">Registration Form Builder</h3>
-                <Button
-                  onClick={() => setShowFormPreview(true)}
-                  variant="outline"
-                  className="rounded-2xl border-orange-200 text-orange-700 hover:bg-orange-50"
-                >
-                  <Eye className="w-4 h-4 mr-2" />
-                  Preview Form
-                </Button>
-              </div>
+            {/* Form Fields List */}
+            <div className="space-y-4">
+              {programData.formFields.map((field) => (
+                <Card key={field.id} className="border-blue-100 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <CardTitle className="text-lg text-blue-900 flex items-center">
+                          {field.label}
+                          {field.mandatory && <span className="text-red-500 ml-1">*</span>}
+                        </CardTitle>
+                        <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full">
+                          {field.type}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleFieldExpansion(field.id)}
+                          className="text-blue-600 hover:bg-blue-50"
+                        >
+                          {field.expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteFormField(field.id)}
+                          className="text-red-500 hover:bg-red-50"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
 
-              <div className="space-y-4">
-                {programData.formFields.map((field) => (
-                  <Card key={field.id} className="border-stone-200/50 bg-stone-50/30">
-                    <CardContent className="p-6">
-                      <div className="grid grid-cols-3 gap-4 items-start">
+                  {field.expanded && (
+                    <CardContent className="space-y-6">
+                      {/* Basic Field Settings */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label className="text-stone-800">Field Label</Label>
+                          <Label className="text-blue-900 font-medium">Field Label</Label>
                           <Input
                             value={field.label}
                             onChange={(e) => updateFormField(field.id, { label: e.target.value })}
-                            className="rounded-2xl border-stone-200 bg-white/80"
+                            className="border-blue-200 focus:border-blue-400 focus:ring-blue-200"
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-stone-800">Helper Text</Label>
+                          <Label className="text-blue-900 font-medium">Helper Text</Label>
                           <Input
                             value={field.helperText}
                             onChange={(e) => updateFormField(field.id, { helperText: e.target.value })}
-                            className="rounded-2xl border-stone-200 bg-white/80"
-                            placeholder="Optional helper text"
+                            className="border-blue-200 focus:border-blue-400 focus:ring-blue-200"
+                            placeholder="Guidance text for users"
                           />
                         </div>
-                        <div className="flex items-center justify-between pt-6">
-                          <div className="flex items-center space-x-2">
-                            <Switch
-                              checked={field.mandatory}
-                              onCheckedChange={(checked) => updateFormField(field.id, { mandatory: checked })}
-                              className="data-[state=checked]:bg-orange-500"
-                            />
-                            <Label className="text-stone-800 text-sm">Mandatory</Label>
-                          </div>
-                          <span className="text-xs text-orange-700 bg-orange-100 px-2 py-1 rounded-full">
-                            {field.type}
-                          </span>
-                        </div>
                       </div>
+
+                      {/* Mandatory Toggle */}
+                      <div className="flex items-center justify-between bg-blue-50/50 rounded-xl p-4 border border-blue-100">
+                        <div className="flex items-center space-x-3">
+                          <Label className="text-blue-900 font-medium">Required Field</Label>
+                          <div className="group relative">
+                            <Info className="w-4 h-4 text-blue-500 cursor-help" />
+                            <div className="absolute invisible group-hover:visible bg-blue-900 text-white text-xs rounded px-2 py-1 -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap z-10">
+                              Mark this field as mandatory for submission
+                            </div>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={field.mandatory}
+                          onCheckedChange={(checked) => updateFormField(field.id, { mandatory: checked })}
+                          className="data-[state=checked]:bg-blue-600"
+                        />
+                      </div>
+
+                      {/* Validation Rules */}
+                      <div className="space-y-4">
+                        <div className="flex items-center space-x-3">
+                          <Label className="text-blue-900 font-medium">Validation Rules</Label>
+                          <div className="group relative">
+                            <Info className="w-4 h-4 text-blue-500 cursor-help" />
+                            <div className="absolute invisible group-hover:visible bg-blue-900 text-white text-xs rounded px-2 py-1 -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap z-10">
+                              Add rules to validate user input
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Selected Rules */}
+                        {field.validationRules.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {field.validationRules.map((ruleId) => {
+                              const rule = validationRules.find(r => r.id === ruleId);
+                              return rule ? (
+                                <div key={ruleId} className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                  <span>{rule.name}</span>
+                                  <button
+                                    onClick={() => removeValidationRule(field.id, ruleId)}
+                                    className="ml-2 text-blue-600 hover:text-blue-800"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ) : null;
+                            })}
+                          </div>
+                        )}
+
+                        {/* Add Validation Rule */}
+                        <Select onValueChange={(value) => addValidationRule(field.id, value)}>
+                          <SelectTrigger className="w-64 border-blue-200 focus:border-blue-400">
+                            <Plus className="w-4 h-4 mr-2 text-blue-600" />
+                            <SelectValue placeholder="Add validation rule" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white border border-blue-200">
+                            {validationRules
+                              .filter(rule => !field.validationRules.includes(rule.id))
+                              .map((rule) => (
+                                <SelectItem key={rule.id} value={rule.id} className="hover:bg-blue-50">
+                                  <div>
+                                    <div className="font-medium text-blue-900">{rule.name}</div>
+                                    <div className="text-xs text-blue-600">{rule.description}</div>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Options for Dropdown Fields */}
+                      {field.type === 'dropdown' && (
+                        <div className="space-y-3">
+                          <Label className="text-blue-900 font-medium">Dropdown Options</Label>
+                          <div className="space-y-2">
+                            {field.options?.map((option, index) => (
+                              <div key={index} className="flex items-center space-x-2">
+                                <Input
+                                  value={option}
+                                  onChange={(e) => {
+                                    const newOptions = [...(field.options || [])];
+                                    newOptions[index] = e.target.value;
+                                    updateFormField(field.id, { options: newOptions });
+                                  }}
+                                  className="border-blue-200 focus:border-blue-400"
+                                />
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    const newOptions = field.options?.filter((_, i) => i !== index);
+                                    updateFormField(field.id, { options: newOptions });
+                                  }}
+                                  className="text-red-500 hover:bg-red-50"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            ))}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                const newOptions = [...(field.options || []), `Option ${(field.options?.length || 0) + 1}`];
+                                updateFormField(field.id, { options: newOptions });
+                              }}
+                              className="border-blue-200 text-blue-700 hover:bg-blue-50"
+                            >
+                              <Plus className="w-4 h-4 mr-2" />
+                              Add Option
+                            </Button>
+                          </div>
+                        </div>
+                      )}
                     </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              <div className="flex items-center space-x-4">
-                <Select onValueChange={(value) => addFormField(value as FormField['type'])}>
-                  <SelectTrigger className="w-48 rounded-2xl border-orange-200 bg-white/80">
-                    <Plus className="w-4 h-4 mr-2" />
-                    <SelectValue placeholder="Add New Field" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="text">Text Field</SelectItem>
-                    <SelectItem value="date">Date Field</SelectItem>
-                    <SelectItem value="file">File Upload</SelectItem>
-                    <SelectItem value="dropdown">Dropdown</SelectItem>
-                    <SelectItem value="paragraph">Paragraph</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+                  )}
+                </Card>
+              ))}
             </div>
+
+            {/* Add New Field Section */}
+            <Card className="border-blue-200 border-dashed bg-blue-50/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center space-x-4">
+                  <Select onValueChange={(value) => addFormField(value as FormField['type'])}>
+                    <SelectTrigger className="w-64 border-blue-300 bg-white">
+                      <Plus className="w-4 h-4 mr-2 text-blue-600" />
+                      <SelectValue placeholder="Add New Field" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white border border-blue-200">
+                      <SelectItem value="text">Text Field</SelectItem>
+                      <SelectItem value="date">Date Field</SelectItem>
+                      <SelectItem value="file">File Upload</SelectItem>
+                      <SelectItem value="dropdown">Dropdown</SelectItem>
+                      <SelectItem value="paragraph">Paragraph</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
           </div>
+        </div>
 
-          {/* Footer Navigation for Form Builder */}
-          <div className="bg-gradient-to-r from-stone-50 to-orange-50/50 px-8 py-6 border-t border-stone-200/50">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Button
-                  onClick={() => setShowFormPreview(true)}
-                  variant="outline"
-                  className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
-                >
-                  Back to Preview
-                </Button>
-                <Button
-                  variant="ghost"
-                  className="text-stone-600 hover:text-stone-800 hover:bg-stone-50 rounded-2xl"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  Save Draft
-                </Button>
-              </div>
-
-              <div>
-                <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white shadow-lg">
-                  Save & Publish Program
-                </Button>
-              </div>
+        {/* Footer Controls */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-blue-100 px-6 py-4 shadow-lg">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button
+                onClick={() => setShowFormPreview(true)}
+                variant="outline"
+                className="border-blue-200 text-blue-700 hover:bg-blue-50 rounded-xl"
+              >
+                Back to Preview
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-xl"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Save Draft
+              </Button>
             </div>
+
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg px-6">
+              Save & Publish Program
+            </Button>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  return null;
 };
 
 export default ProgramCreation;
