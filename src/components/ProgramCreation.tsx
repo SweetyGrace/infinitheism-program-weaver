@@ -413,22 +413,9 @@ const ProgramCreation = () => {
                       </div>
 
                       {/* Registration Settings Section */}
-                      <div className="space-y-6 bg-blue-50/30 rounded-2xl p-6 border border-blue-200/50">
+                      <div className="space-y-6">
                         <h4 className="text-lg font-medium text-stone-800">Registration Settings</h4>
                         
-                        {/* Approval Required Toggle */}
-                        <div className="flex items-center justify-between bg-white/60 rounded-2xl p-4 border border-stone-200/50">
-                          <div className="flex items-center gap-2">
-                            <Label className="text-stone-800 font-medium">Is approval required for registration?</Label>
-                            <Info className="w-4 h-4 text-stone-500" title="Approval allows manual review of each registration before confirmation" />
-                          </div>
-                          <Switch
-                            checked={programData.approvalRequired}
-                            onCheckedChange={(checked) => updateProgramData({ approvalRequired: checked })}
-                            className="data-[state=checked]:bg-orange-500"
-                          />
-                        </div>
-
                         {/* Registration Period */}
                         <div className="space-y-4">
                           <Label className="text-stone-800 font-medium">Registration Period</Label>
@@ -440,13 +427,13 @@ const ProgramCreation = () => {
                                   type="date"
                                   value={programData.registrationStartDate}
                                   onChange={(e) => updateProgramData({ registrationStartDate: e.target.value })}
-                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                  className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
                                 />
                                 <Input
                                   type="time"
                                   value={programData.registrationStartTime}
                                   onChange={(e) => updateProgramData({ registrationStartTime: e.target.value })}
-                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                  className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
                                 />
                               </div>
                             </div>
@@ -457,25 +444,48 @@ const ProgramCreation = () => {
                                   type="date"
                                   value={programData.registrationEndDate}
                                   onChange={(e) => updateProgramData({ registrationEndDate: e.target.value })}
-                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                  className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
                                 />
                                 <Input
                                   type="time"
                                   value={programData.registrationEndTime}
                                   onChange={(e) => updateProgramData({ registrationEndTime: e.target.value })}
-                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                  className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
                                 />
                               </div>
                             </div>
                           </div>
                         </div>
 
+                        {/* Approval Required Toggle */}
+                        <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                          <div className="flex items-center gap-3">
+                            <Label className="text-stone-800 font-medium">Is approval required for registration?</Label>
+                            <div className="group relative">
+                              <Info className="w-4 h-4 text-stone-500 cursor-help" />
+                              <div className="absolute invisible group-hover:visible bg-stone-800 text-white text-xs rounded px-2 py-1 -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                Approval allows manual review of each registration before confirmation
+                              </div>
+                            </div>
+                          </div>
+                          <Switch
+                            checked={programData.approvalRequired}
+                            onCheckedChange={(checked) => updateProgramData({ approvalRequired: checked })}
+                            className="data-[state=checked]:bg-orange-500"
+                          />
+                        </div>
+
                         {/* Seat Limit Toggle */}
                         <div className="space-y-4">
-                          <div className="flex items-center justify-between bg-white/60 rounded-2xl p-4 border border-stone-200/50">
-                            <div className="flex items-center gap-2">
+                          <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                            <div className="flex items-center gap-3">
                               <Label className="text-stone-800 font-medium">Is there a limit on seats?</Label>
-                              <Info className="w-4 h-4 text-stone-500" title="Leave unchecked for unlimited participants" />
+                              <div className="group relative">
+                                <Info className="w-4 h-4 text-stone-500 cursor-help" />
+                                <div className="absolute invisible group-hover:visible bg-stone-800 text-white text-xs rounded px-2 py-1 -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                                  Leave unchecked for unlimited participants
+                                </div>
+                              </div>
                             </div>
                             <Switch
                               checked={programData.seatLimitEnabled}
@@ -506,178 +516,195 @@ const ProgramCreation = () => {
 
               {/* Page 3: Schedule & Logistics */}
               {currentStep === 2 && (
-                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8 animate-fade-in">
-                  <div className="space-y-8">
-                    
-                    <div className="space-y-6">
-                      <h3 className="text-lg font-medium text-stone-800">Session Scheduler</h3>
-                      {programData.selectedSessions.map((session) => (
-                        <Card key={session} className="border-stone-200/50 bg-stone-50/30">
-                          <CardContent className="p-6">
-                            <h4 className="font-medium text-stone-800 mb-4">{session}</h4>
-                            <div className="grid grid-cols-2 gap-4 mb-4">
-                              <div className="space-y-2">
-                                <Label className="text-stone-800">Start Date</Label>
-                                <Input
-                                  type="date"
-                                  value={programData.sessionSchedules[session]?.startDate || ''}
-                                  onChange={(e) => {
-                                    const startDate = e.target.value;
-                                    const endDate = calculateEndDate(startDate, session);
-                                    updateProgramData({
-                                      sessionSchedules: {
-                                        ...programData.sessionSchedules,
-                                        [session]: { 
-                                          ...programData.sessionSchedules[session],
-                                          startDate, 
-                                          endDate 
-                                        }
-                                      }
-                                    });
-                                  }}
-                                  className="rounded-2xl border-stone-200 bg-white/80"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label className="text-stone-800 flex items-center gap-2">
-                                  End Date
-                                  <Info className="w-4 h-4 text-stone-500" />
-                                </Label>
-                                <Input
-                                  type="date"
-                                  value={programData.sessionSchedules[session]?.endDate || ''}
-                                  disabled
-                                  className="rounded-2xl border-stone-200 bg-stone-50"
-                                />
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-2 gap-4">
-                              <div className="space-y-2">
-                                <Label className="text-stone-800">Check-in Time</Label>
-                                <Input
-                                  type="time"
-                                  value={programData.sessionSchedules[session]?.checkInTime || ''}
-                                  onChange={(e) => {
-                                    const checkInTime = e.target.value;
-                                    const checkOutTime = calculateCheckOutTime(checkInTime);
-                                    updateProgramData({
-                                      sessionSchedules: {
-                                        ...programData.sessionSchedules,
-                                        [session]: { 
-                                          ...programData.sessionSchedules[session],
-                                          checkInTime, 
-                                          checkOutTime 
-                                        }
-                                      }
-                                    });
-                                  }}
-                                  className="rounded-2xl border-stone-200 bg-white/80"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label className="text-stone-800 flex items-center gap-2">
-                                  Check-out Time
-                                  <Info className="w-4 h-4 text-stone-500" />
-                                </Label>
-                                <Input
-                                  type="time"
-                                  value={programData.sessionSchedules[session]?.checkOutTime || ''}
-                                  disabled
-                                  className="rounded-2xl border-stone-200 bg-stone-50"
-                                />
-                                <p className="text-xs text-stone-500">Auto-calculated (6 hours after check-in)</p>
-                              </div>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))}
-                    </div>
-
-                    {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
-                      <div className="space-y-6">
-                        <div className="space-y-2">
-                          <Label className="text-stone-800 font-medium">Venue Address</Label>
-                          <Select value={programData.selectedVenue} onValueChange={handleVenueChange}>
-                            <SelectTrigger className="rounded-2xl border-stone-200 bg-white/80">
-                              <SelectValue placeholder="Select venue" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-white border border-stone-200 shadow-lg rounded-xl z-50">
-                              {predefinedVenues.map((venue) => (
-                                <SelectItem key={venue} value={venue} className="hover:bg-stone-50">
-                                  {venue === 'Custom' ? 'Custom Address' : venue}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                          
-                          {programData.selectedVenue === 'Custom' && (
-                            <Textarea
-                              value={programData.customVenue}
-                              onChange={(e) => handleCustomVenueChange(e.target.value)}
-                              className="rounded-2xl border-stone-200 bg-white/80 mt-2"
-                              placeholder="Enter custom venue address"
-                              rows={3}
-                            />
-                          )}
-                        </div>
-
-                        <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                          <div>
-                            <Label className="text-stone-800 font-medium">Is Travel Required?</Label>
-                            <p className="text-sm text-stone-600">Enable if transportation is needed</p>
-                          </div>
-                          <Switch
-                            checked={programData.travelRequired}
-                            onCheckedChange={(checked) => updateProgramData({ travelRequired: checked })}
-                            className="data-[state=checked]:bg-orange-500"
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Payment Configuration - Moved from Program Basics */}
-                    <div className="space-y-6">
-                      <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                        <div>
-                          <Label className="text-stone-800 font-medium">Is Payment Required?</Label>
-                          <p className="text-sm text-stone-600">Enable if fees are required for this program</p>
-                        </div>
-                        <Switch
-                          checked={programData.paymentRequired}
-                          onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
-                          className="data-[state=checked]:bg-orange-500"
+                <div className="animate-fade-in">
+                  
+                  {/* Banner Image Section */}
+                  {programData.programType && (
+                    <div className="mb-8">
+                      <div className="w-full max-w-[1200px] mx-auto">
+                        <img
+                          src="/lovable-uploads/96a2a56e-9042-45b6-b8df-4093d76967e3.png"
+                          alt={`Banner for selected program: ${programData.programType.name} – A quick glance.`}
+                          className="w-full h-auto max-h-60 object-cover rounded-2xl shadow-lg border border-stone-200/50"
+                          style={{ maxHeight: '240px' }}
                         />
                       </div>
+                    </div>
+                  )}
 
-                      {programData.paymentRequired && (
-                        <div className="space-y-6 bg-orange-50/30 rounded-2xl p-6 border border-orange-200/50">
-                          <h4 className="text-lg font-medium text-stone-800">Payment Configuration</h4>
-                          <div className="grid grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                              <Label htmlFor="hdbFee" className="text-stone-800 font-medium">HDB Fee (₹)</Label>
-                              <Input
-                                id="hdbFee"
-                                type="number"
-                                value={programData.hdbFee}
-                                onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
-                                className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
-                                placeholder="Enter HDB fee amount"
+                  <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8">
+                    <div className="space-y-8">
+                      
+                      <div className="space-y-6">
+                        <h3 className="text-lg font-medium text-stone-800">Session Scheduler</h3>
+                        {programData.selectedSessions.map((session) => (
+                          <Card key={session} className="border-stone-200/50 bg-stone-50/30">
+                            <CardContent className="p-6">
+                              <h4 className="font-medium text-stone-800 mb-4">{session}</h4>
+                              <div className="grid grid-cols-2 gap-4 mb-4">
+                                <div className="space-y-2">
+                                  <Label className="text-stone-800">Start Date</Label>
+                                  <Input
+                                    type="date"
+                                    value={programData.sessionSchedules[session]?.startDate || ''}
+                                    onChange={(e) => {
+                                      const startDate = e.target.value;
+                                      const endDate = calculateEndDate(startDate, session);
+                                      updateProgramData({
+                                        sessionSchedules: {
+                                          ...programData.sessionSchedules,
+                                          [session]: { 
+                                            ...programData.sessionSchedules[session],
+                                            startDate, 
+                                            endDate 
+                                          }
+                                        }
+                                      });
+                                    }}
+                                    className="rounded-2xl border-stone-200 bg-white/80"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label className="text-stone-800 flex items-center gap-2">
+                                    End Date
+                                    <Info className="w-4 h-4 text-stone-500" />
+                                  </Label>
+                                  <Input
+                                    type="date"
+                                    value={programData.sessionSchedules[session]?.endDate || ''}
+                                    disabled
+                                    className="rounded-2xl border-stone-200 bg-stone-50"
+                                  />
+                                </div>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label className="text-stone-800">Check-in Time</Label>
+                                  <Input
+                                    type="time"
+                                    value={programData.sessionSchedules[session]?.checkInTime || ''}
+                                    onChange={(e) => {
+                                      const checkInTime = e.target.value;
+                                      const checkOutTime = calculateCheckOutTime(checkInTime);
+                                      updateProgramData({
+                                        sessionSchedules: {
+                                          ...programData.sessionSchedules,
+                                          [session]: { 
+                                            ...programData.sessionSchedules[session],
+                                            checkInTime, 
+                                            checkOutTime 
+                                          }
+                                        }
+                                      });
+                                    }}
+                                    className="rounded-2xl border-stone-200 bg-white/80"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label className="text-stone-800 flex items-center gap-2">
+                                    Check-out Time
+                                    <Info className="w-4 h-4 text-stone-500" />
+                                  </Label>
+                                  <Input
+                                    type="time"
+                                    value={programData.sessionSchedules[session]?.checkOutTime || ''}
+                                    disabled
+                                    className="rounded-2xl border-stone-200 bg-stone-50"
+                                  />
+                                  <p className="text-xs text-stone-500">Auto-calculated (6 hours after check-in)</p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+
+                      {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
+                        <div className="space-y-6">
+                          <div className="space-y-2">
+                            <Label className="text-stone-800 font-medium">Venue Address</Label>
+                            <Select value={programData.selectedVenue} onValueChange={handleVenueChange}>
+                              <SelectTrigger className="rounded-2xl border-stone-200 bg-white/80">
+                                <SelectValue placeholder="Select venue" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-white border border-stone-200 shadow-lg rounded-xl z-50">
+                                {predefinedVenues.map((venue) => (
+                                  <SelectItem key={venue} value={venue} className="hover:bg-stone-50">
+                                    {venue === 'Custom' ? 'Custom Address' : venue}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            
+                            {programData.selectedVenue === 'Custom' && (
+                              <Textarea
+                                value={programData.customVenue}
+                                onChange={(e) => handleCustomVenueChange(e.target.value)}
+                                className="rounded-2xl border-stone-200 bg-white/80 mt-2"
+                                placeholder="Enter custom venue address"
+                                rows={3}
                               />
+                            )}
+                          </div>
+
+                          <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                            <div>
+                              <Label className="text-stone-800 font-medium">Is Travel Required?</Label>
+                              <p className="text-sm text-stone-600">Enable if transportation is needed</p>
                             </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="msdFee" className="text-stone-800 font-medium">MSD Fee (₹)</Label>
-                              <Input
-                                id="msdFee"
-                                type="number"
-                                value={programData.msdFee}
-                                onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
-                                className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
-                                placeholder="Enter MSD fee amount"
-                              />
-                            </div>
+                            <Switch
+                              checked={programData.travelRequired}
+                              onCheckedChange={(checked) => updateProgramData({ travelRequired: checked })}
+                              className="data-[state=checked]:bg-orange-500"
+                            />
                           </div>
                         </div>
                       )}
+
+                      {/* Payment Configuration - Moved from Program Basics */}
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                          <div>
+                            <Label className="text-stone-800 font-medium">Is Payment Required?</Label>
+                            <p className="text-sm text-stone-600">Enable if fees are required for this program</p>
+                          </div>
+                          <Switch
+                            checked={programData.paymentRequired}
+                            onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
+                            className="data-[state=checked]:bg-orange-500"
+                          />
+                        </div>
+
+                        {programData.paymentRequired && (
+                          <div className="space-y-6 bg-orange-50/30 rounded-2xl p-6 border border-orange-200/50">
+                            <h4 className="text-lg font-medium text-stone-800">Payment Configuration</h4>
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <Label htmlFor="hdbFee" className="text-stone-800 font-medium">HDB Fee (₹)</Label>
+                                <Input
+                                  id="hdbFee"
+                                  type="number"
+                                  value={programData.hdbFee}
+                                  onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
+                                  className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                                  placeholder="Enter HDB fee amount"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="msdFee" className="text-stone-800 font-medium">MSD Fee (₹)</Label>
+                                <Input
+                                  id="msdFee"
+                                  type="number"
+                                  value={programData.msdFee}
+                                  onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
+                                  className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                                  placeholder="Enter MSD fee amount"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
