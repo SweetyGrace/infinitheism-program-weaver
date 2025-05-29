@@ -453,7 +453,7 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
           <div className="p-8">
             {/* Form Preview */}
             <div className="border-2 border-dashed border-blue-200 p-6 px-0 py-0 bg-transparent rounded-none">
-              <div className="bg-white rounded-lg p-6 card-secondary">
+              <div className="bg-white rounded-lg p-6 card-secondary px-0 py-0">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="section-title">
                     {programData.programName} Registration
