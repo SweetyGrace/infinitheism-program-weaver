@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+import RegistrationFormPreview from './RegistrationFormPreview';
 
 interface ProgramType {
   id: string;
@@ -32,6 +33,8 @@ interface ProgramData {
   programFee: number;
   currency: string;
   refundPolicy: string;
+  layoutStyle: 'single-column' | 'two-column' | 'question-by-question';
+  userType: 'new' | 'existing';
   formFields: FormField[];
 }
 
@@ -90,6 +93,7 @@ const programTypes: ProgramType[] = [
 const ProgramCreation = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showPreview, setShowPreview] = useState(false);
+  const [showFormPreview, setShowFormPreview] = useState(false);
   const [programData, setProgramData] = useState<ProgramData>({
     programType: null,
     programName: '',
@@ -102,6 +106,8 @@ const ProgramCreation = () => {
     programFee: 0,
     currency: 'USD',
     refundPolicy: '',
+    layoutStyle: 'single-column',
+    userType: 'new',
     formFields: [
       { id: '1', type: 'text', label: 'Name', mandatory: true, helperText: 'Full legal name' },
       { id: '2', type: 'text', label: 'Email', mandatory: true, helperText: 'Primary contact email' },
@@ -155,14 +161,33 @@ const ProgramCreation = () => {
   };
 
   const getStepTitle = () => {
+    if (showFormPreview) return 'Preview Registration Form';
     switch (currentStep) {
       case 0: return 'Select the Type of Program to Create';
       case 1: return 'Program Basics';
       case 2: return 'Schedule & Logistics';
-      case 3: return 'Registration Form Builder';
+      case 3: return 'Registration Layout & Settings';
+      case 4: return 'Registration Form Builder';
       default: return 'Create a New Program';
     }
   };
+
+  if (showFormPreview) {
+    return (
+      <RegistrationFormPreview
+        programData={programData}
+        onBack={() => setShowFormPreview(false)}
+        onProceed={() => {
+          // Handle final save & publish
+          console.log('Proceeding with form as-is');
+        }}
+        onEditForm={() => {
+          setShowFormPreview(false);
+          setCurrentStep(4);
+        }}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
@@ -173,7 +198,7 @@ const ProgramCreation = () => {
           {currentStep > 0 && (
             <>
               <div className="flex items-center space-x-4">
-                {[1, 2, 3].map((step) => (
+                {[1, 2, 3, 4].map((step) => (
                   <div key={step} className="flex items-center">
                     <div className={cn(
                       "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300",
@@ -183,7 +208,7 @@ const ProgramCreation = () => {
                     )}>
                       {step}
                     </div>
-                    {step < 3 && (
+                    {step < 4 && (
                       <div className={cn(
                         "w-12 h-0.5 mx-2 transition-all duration-300",
                         currentStep > step ? "bg-gradient-to-r from-orange-300 to-amber-400" : "bg-stone-200"
@@ -200,7 +225,10 @@ const ProgramCreation = () => {
                   Schedule & Logistics
                 </span>
                 <span className={cn("text-sm", currentStep === 3 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                  Registration Form
+                  Layout & Settings
+                </span>
+                <span className={cn("text-sm", currentStep === 4 ? "text-stone-800 font-medium" : "text-stone-600")}>
+                  Form Builder
                 </span>
               </div>
             </>
@@ -456,8 +484,62 @@ const ProgramCreation = () => {
               </div>
             )}
 
-            {/* Step 3: Registration Form Builder */}
+            {/* Step 3: Registration Layout & Settings */}
             {currentStep === 3 && (
+              <div className="space-y-8 animate-fade-in">
+                <div className="space-y-6">
+                  <h3 className="text-lg font-medium text-stone-800">Choose Registration Layout</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    {[
+                      { id: 'single-column', name: 'Single Column', description: 'Traditional stacked form layout' },
+                      { id: 'two-column', name: 'Two Column', description: 'Personal info on left, other details on right' },
+                      { id: 'question-by-question', name: 'Question-by-Question', description: 'Progressive form with one question at a time' }
+                    ].map((layout) => (
+                      <Card 
+                        key={layout.id}
+                        className={cn(
+                          "cursor-pointer border-stone-200/50 transition-all duration-300 hover:shadow-lg",
+                          programData.layoutStyle === layout.id ? "border-orange-300 bg-orange-50/50" : "hover:border-orange-200"
+                        )}
+                        onClick={() => updateProgramData({ layoutStyle: layout.id as any })}
+                      >
+                        <CardContent className="p-6 text-center">
+                          <h4 className="font-medium text-stone-800 mb-2">{layout.name}</h4>
+                          <p className="text-sm text-stone-600">{layout.description}</p>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  <h3 className="text-lg font-medium text-stone-800">Choose User Context</h3>
+                  <RadioGroup
+                    value={programData.userType}
+                    onValueChange={(value: 'new' | 'existing') => updateProgramData({ userType: value })}
+                    className="space-y-4"
+                  >
+                    <div className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                      <RadioGroupItem value="new" id="new-user" className="border-orange-300 text-orange-600" />
+                      <div>
+                        <Label htmlFor="new-user" className="text-stone-800 font-medium">New User</Label>
+                        <p className="text-sm text-stone-600">Show blank form for first-time participants</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                      <RadioGroupItem value="existing" id="existing-user" className="border-orange-300 text-orange-600" />
+                      <div>
+                        <Label htmlFor="existing-user" className="text-stone-800 font-medium">Existing User</Label>
+                        <p className="text-sm text-stone-600">Prefill known fields like name, email, contact</p>
+                      </div>
+                    </div>
+                  </RadioGroup>
+                </div>
+              </div>
+            )}
+
+            {/* Step 4: Registration Form Builder */}
+            {currentStep === 4 && (
               <div className="space-y-8 animate-fade-in">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium text-stone-800">Registration Form Builder</h3>
@@ -555,15 +637,21 @@ const ProgramCreation = () => {
               </div>
 
               <div>
-                {currentStep < 3 && currentStep > 0 ? (
+                {currentStep < 4 && currentStep > 0 ? (
                   <Button
-                    onClick={() => setCurrentStep(currentStep + 1)}
+                    onClick={() => {
+                      if (currentStep === 3) {
+                        setShowFormPreview(true);
+                      } else {
+                        setCurrentStep(currentStep + 1);
+                      }
+                    }}
                     className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
                   >
-                    {currentStep === 2 ? 'Continue to Form Builder' : 'Continue to Schedule'}
+                    {currentStep === 2 ? 'Continue to Layout' : currentStep === 3 ? 'Preview Generated Form' : 'Continue to Schedule'}
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
-                ) : currentStep === 3 ? (
+                ) : currentStep === 4 ? (
                   <Button className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white shadow-lg">
                     Save & Publish Program
                   </Button>
