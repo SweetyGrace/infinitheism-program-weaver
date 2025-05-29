@@ -36,10 +36,7 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
   onSaveDraft
 }) => {
   const [userType, setUserType] = useState<'new' | 'existing'>('new');
-  const [layoutStyle, setLayoutStyle] = useState<'single-column' | 'multi-column' | 'question-by-question'>('single-column');
-  const [personalInfoOpen, setPersonalInfoOpen] = useState(true);
-  const [invoiceInfoOpen, setInvoiceInfoOpen] = useState(true);
-  const [travelInfoOpen, setTravelInfoOpen] = useState(true);
+  const [layoutStyle, setLayoutStyle] = useState<'single-column' | 'two-column' | 'question-by-question'>('single-column');
 
   const isExistingUser = userType === 'existing';
 
@@ -103,132 +100,135 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
     );
   };
 
-  const renderPersonalInfoSection = () => (
-    <Collapsible open={personalInfoOpen} onOpenChange={setPersonalInfoOpen}>
-      <CollapsibleTrigger asChild>
-        <CardHeader className="cursor-pointer hover:bg-stone-50/50 transition-colors">
-          <CardTitle className="text-lg text-stone-800 flex items-center justify-between">
-            Personal Information
-            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-              4 fields
-            </span>
-          </CardTitle>
-        </CardHeader>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <CardContent className="space-y-4">
-          {renderFormField('Name', 'text', true, true)}
-          {renderFormField('Email', 'text', true, true)}
-          {renderFormField('Phone', 'text', true, true)}
-          {renderFormField('Age', 'text', false, false)}
-        </CardContent>
-      </CollapsibleContent>
-    </Collapsible>
-  );
+  const personalInfoFields = [
+    { label: 'Name', type: 'text', mandatory: true, prefilled: true },
+    { label: 'Email', type: 'text', mandatory: true, prefilled: true },
+    { label: 'Phone', type: 'text', mandatory: true, prefilled: true },
+    { label: 'Age', type: 'text', mandatory: false, prefilled: false }
+  ];
 
-  const renderInvoiceInfoSection = () => (
-    <Collapsible open={invoiceInfoOpen} onOpenChange={setInvoiceInfoOpen}>
-      <CollapsibleTrigger asChild>
-        <CardHeader className="cursor-pointer hover:bg-stone-50/50 transition-colors">
-          <CardTitle className="text-lg text-stone-800 flex items-center justify-between">
-            Payment Information
-            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-              2 fields
-            </span>
-          </CardTitle>
-        </CardHeader>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label className="text-stone-800">HDB Fee *</Label>
-            <Input 
-              className="rounded-2xl border-stone-200" 
-              value={`₹ ${programData.hdbFee}`}
-              readOnly
-            />
-          </div>
-          <div className="space-y-2">
-            <Label className="text-stone-800">MSD Fee *</Label>
-            <Input 
-              className="rounded-2xl border-stone-200" 
-              value={`₹ ${programData.msdFee}`}
-              readOnly
-            />
-          </div>
-        </CardContent>
-      </CollapsibleContent>
-    </Collapsible>
-  );
+  const paymentFields = [
+    { label: 'HDB Fee', type: 'currency', mandatory: true, value: programData.hdbFee },
+    { label: 'MSD Fee', type: 'currency', mandatory: true, value: programData.msdFee }
+  ];
 
-  const renderTravelInfoSection = () => (
-    <Collapsible open={travelInfoOpen} onOpenChange={setTravelInfoOpen}>
-      <CollapsibleTrigger asChild>
-        <CardHeader className="cursor-pointer hover:bg-stone-50/50 transition-colors">
-          <CardTitle className="text-lg text-stone-800 flex items-center justify-between">
-            Travel Information
-            <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-              1 field
-            </span>
-          </CardTitle>
-        </CardHeader>
-      </CollapsibleTrigger>
-      <CollapsibleContent>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label className="text-stone-800">Venue Address</Label>
-            <Textarea 
-              className="rounded-2xl border-stone-200" 
-              value={programData.venueAddress}
-              readOnly
-            />
-          </div>
-        </CardContent>
-      </CollapsibleContent>
-    </Collapsible>
-  );
+  const travelFields = [
+    { label: 'Venue Address', type: 'textarea', mandatory: false, value: programData.venueAddress }
+  ];
 
   const renderSingleColumnLayout = () => (
     <div className="space-y-6">
       <Card className="border-stone-200/50">
-        {renderPersonalInfoSection()}
+        <CardHeader>
+          <CardTitle className="text-lg text-stone-800">Personal Information</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {personalInfoFields.map((field, index) => 
+            renderFormField(field.label, field.type, field.mandatory, field.prefilled)
+          )}
+        </CardContent>
       </Card>
       
       {programData.paymentRequired && (
         <Card className="border-stone-200/50">
-          {renderInvoiceInfoSection()}
+          <CardHeader>
+            <CardTitle className="text-lg text-stone-800">Payment Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {paymentFields.map((field, index) => (
+              <div key={index} className="space-y-2">
+                <Label className="text-stone-800">{field.label} *</Label>
+                <Input 
+                  className="rounded-2xl border-stone-200" 
+                  value={`₹ ${field.value}`}
+                  readOnly
+                />
+              </div>
+            ))}
+          </CardContent>
         </Card>
       )}
       
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
         <Card className="border-stone-200/50">
-          {renderTravelInfoSection()}
+          <CardHeader>
+            <CardTitle className="text-lg text-stone-800">Travel Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {travelFields.map((field, index) => (
+              <div key={index} className="space-y-2">
+                <Label className="text-stone-800">{field.label}</Label>
+                <Textarea 
+                  className="rounded-2xl border-stone-200" 
+                  value={field.value}
+                  readOnly
+                />
+              </div>
+            ))}
+          </CardContent>
         </Card>
       )}
     </div>
   );
 
-  const renderMultiColumnLayout = () => (
-    <div className="grid grid-cols-2 gap-6">
-      <div>
-        <Card className="border-stone-200/50">
-          {renderPersonalInfoSection()}
-        </Card>
-      </div>
+  const renderTwoColumnLayout = () => (
+    <div className="space-y-6">
+      <Card className="border-stone-200/50">
+        <CardHeader>
+          <CardTitle className="text-lg text-stone-800">Personal Information</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            {personalInfoFields.map((field, index) => 
+              renderFormField(field.label, field.type, field.mandatory, field.prefilled)
+            )}
+          </div>
+        </CardContent>
+      </Card>
       
-      <div className="space-y-6">
-        {programData.paymentRequired && (
-          <Card className="border-stone-200/50">
-            {renderInvoiceInfoSection()}
-          </Card>
-        )}
-        
-        {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
-          <Card className="border-stone-200/50">
-            {renderTravelInfoSection()}
-          </Card>
-        )}
-      </div>
+      {programData.paymentRequired && (
+        <Card className="border-stone-200/50">
+          <CardHeader>
+            <CardTitle className="text-lg text-stone-800">Payment Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              {paymentFields.map((field, index) => (
+                <div key={index} className="space-y-2">
+                  <Label className="text-stone-800">{field.label} *</Label>
+                  <Input 
+                    className="rounded-2xl border-stone-200" 
+                    value={`₹ ${field.value}`}
+                    readOnly
+                  />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
+        <Card className="border-stone-200/50">
+          <CardHeader>
+            <CardTitle className="text-lg text-stone-800">Travel Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4">
+              {travelFields.map((field, index) => (
+                <div key={index} className="space-y-2">
+                  <Label className="text-stone-800">{field.label}</Label>
+                  <Textarea 
+                    className="rounded-2xl border-stone-200" 
+                    value={field.value}
+                    readOnly
+                  />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 
@@ -256,92 +256,112 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-4 shadow-sm" style={{ height: '66px' }}>
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between" style={{ paddingLeft: '10px' }}>
-          <div>
-            <h1 className="text-2xl font-light text-stone-800">Preview Registration Form</h1>
-            <p className="text-stone-600 text-sm mt-1">
-              Based on your selections, we've generated the form your participants will fill out
-            </p>
-          </div>
-          
-          <div className="flex items-center space-x-6">
+      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-4 shadow-sm">
+        <div className="max-w-5xl mx-auto">
+          <h1 className="text-2xl font-light text-stone-800">Preview Registration Form</h1>
+          <p className="text-stone-600 mt-1">
+            Based on your selections, we've generated the form your participants will fill out. You can proceed or customize it.
+          </p>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-5xl mx-auto px-6 py-8">
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
+          <div className="p-8">
             {/* User Type Toggle */}
-            <div className="flex items-center space-x-3">
-              <User className="w-4 h-4 text-stone-600" />
-              <span className="text-sm text-stone-600">Viewing as:</span>
-              <div className="flex items-center space-x-2">
-                <span className={cn("text-sm", userType === 'new' ? "text-stone-800 font-medium" : "text-stone-600")}>
+            <div className="flex items-center justify-between mb-8 p-4 bg-orange-50/50 rounded-2xl border border-orange-200/50">
+              <div>
+                <Label className="text-stone-800 font-medium">Preview Mode</Label>
+                <p className="text-sm text-stone-600">Toggle to see how the form appears for different user types</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <span className={cn("text-sm", !isExistingUser ? "text-stone-800 font-medium" : "text-stone-600")}>
                   New User
                 </span>
                 <Switch
-                  checked={userType === 'existing'}
+                  checked={isExistingUser}
                   onCheckedChange={(checked) => setUserType(checked ? 'existing' : 'new')}
                   className="data-[state=checked]:bg-orange-500"
                 />
-                <span className={cn("text-sm", userType === 'existing' ? "text-stone-800 font-medium" : "text-stone-600")}>
+                <span className={cn("text-sm", isExistingUser ? "text-stone-800 font-medium" : "text-stone-600")}>
                   Existing User
                 </span>
               </div>
             </div>
 
             {/* Layout Selector */}
-            <div className="flex items-center space-x-3">
-              <Settings2 className="w-4 h-4 text-stone-600" />
-              <span className="text-sm text-stone-600">Change Layout:</span>
+            <div className="flex items-center justify-between mb-8 p-4 bg-stone-50/50 rounded-2xl border border-stone-200/50">
+              <div>
+                <Label className="text-stone-800 font-medium">Layout Style</Label>
+                <p className="text-sm text-stone-600">Choose how form fields are arranged</p>
+              </div>
               <Select value={layoutStyle} onValueChange={(value: any) => setLayoutStyle(value)}>
-                <SelectTrigger className="w-48 rounded-2xl border-stone-200">
+                <SelectTrigger className="w-64 rounded-2xl border-stone-200">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-stone-200 shadow-lg rounded-xl">
+                <SelectContent>
                   <SelectItem value="single-column">Single Column</SelectItem>
-                  <SelectItem value="multi-column">Multi Column</SelectItem>
-                  <SelectItem value="question-by-question">Question-by-Question</SelectItem>
+                  <SelectItem value="two-column">Two Column</SelectItem>
+                  <SelectItem value="question-by-question">Question by Question</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="max-w-[1200px] mx-auto px-6 py-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
-          <div className="p-8">
-            
-            {/* Program Info Banner */}
-            <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200/50 mb-8">
-              <h3 className="text-lg font-medium text-stone-800 mb-1">
-                {programData.programName} Registration Form
-              </h3>
-              <p className="text-stone-600 text-sm">
-                {programData.programType} • {programData.mode} mode
-                {programData.paymentRequired && ' • Payment Required'}
-              </p>
             </div>
 
             {/* Form Preview */}
             <div className="border-2 border-dashed border-stone-200 rounded-2xl p-6 bg-stone-50/30">
               <div className="bg-white rounded-2xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-medium text-stone-800">Registration Form Preview</h2>
+                  <h2 className="text-xl font-medium text-stone-800">
+                    {programData.programName} Registration
+                  </h2>
                   <span className="text-sm text-orange-700 bg-orange-100 px-3 py-1 rounded-full">
                     {layoutStyle.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Layout
                   </span>
                 </div>
 
                 {layoutStyle === 'single-column' && renderSingleColumnLayout()}
-                {layoutStyle === 'multi-column' && renderMultiColumnLayout()}
+                {layoutStyle === 'two-column' && renderTwoColumnLayout()}
                 {layoutStyle === 'question-by-question' && renderQuestionByQuestionLayout()}
+              </div>
+            </div>
+
+            {/* Action Section */}
+            <div className="mt-8 text-center">
+              <h3 className="text-lg font-medium text-stone-800 mb-4">
+                Is this form ready to go, or do you want to make changes?
+              </h3>
+              <div className="flex items-center justify-center space-x-4">
+                <Button
+                  onClick={onConfigureFields}
+                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white shadow-lg px-8"
+                >
+                  ✅ Use This Form As-Is
+                </Button>
+                <Button
+                  onClick={onConfigureFields}
+                  variant="outline"
+                  className="rounded-2xl border-orange-200 text-orange-700 hover:bg-orange-50 px-8"
+                >
+                  ✏️ Edit Form Fields
+                </Button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Fixed Footer */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-stone-200/50 px-6 py-4 shadow-lg">
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between">
+      {/* Footer Navigation */}
+      <div className="bg-gradient-to-r from-stone-50 to-orange-50/50 px-8 py-6 border-t border-stone-200/50 sticky bottom-0">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <Button
+            onClick={onBack}
+            variant="outline"
+            className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
+          >
+            <ChevronLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
           <Button
             onClick={onSaveDraft}
             variant="ghost"
@@ -349,23 +369,6 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
           >
             Save as Draft
           </Button>
-
-          <div className="flex items-center space-x-4">
-            <Button
-              onClick={onBack}
-              variant="outline"
-              className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <Button
-              onClick={onConfigureFields}
-              className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg px-8"
-            >
-              Configure Fields for User
-            </Button>
-          </div>
         </div>
       </div>
     </div>
