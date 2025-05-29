@@ -49,10 +49,32 @@ const ProgramCreation = () => {
     setShowPreview(true);
   };
 
+  // Create program data for preview components
+  const programData = {
+    programType: 'consciousness-transformation',
+    programName: programName || 'Sample Program',
+    mode: 'hybrid' as const,
+    paymentRequired: true,
+    hdbFee: 5000,
+    msdFee: 3000,
+    venueAddress: location || 'Sample Location',
+    travelRequired: true
+  };
+
   if (showPreview) {
     return previewType === 'registration' ? 
-      <PreviewRegistrationForm onBack={() => setShowPreview(false)} /> :
-      <PreviewUserForm onBack={() => setShowPreview(false)} />;
+      <PreviewRegistrationForm 
+        programData={programData}
+        onBack={() => setShowPreview(false)}
+        onConfigureFields={() => setShowPreview(false)}
+        onSaveDraft={() => setShowPreview(false)}
+      /> :
+      <PreviewUserForm 
+        programData={programData}
+        onBack={() => setShowPreview(false)}
+        onEditFormFields={() => setShowPreview(false)}
+        onSaveAndExit={() => setShowPreview(false)}
+      />;
   }
 
   return (
@@ -68,7 +90,7 @@ const ProgramCreation = () => {
 
         {/* Main Form Card */}
         <Card className="card-main card-hover max-w-4xl mx-auto">
-          <CardHeader className="p-8">
+          <CardHeader className="section-bg p-8 border-b">
             <CardTitle className="section-title flex items-center gap-3">
               <Plus className="h-6 w-6 text-blue-500" />
               Program Details
