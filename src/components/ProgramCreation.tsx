@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,6 +38,13 @@ interface ProgramData {
   layoutStyle: 'single-column' | 'two-column' | 'question-by-question';
   userType: 'new' | 'existing';
   formFields: FormField[];
+  approvalRequired: boolean;
+  registrationStartDate: string;
+  registrationStartTime: string;
+  registrationEndDate: string;
+  registrationEndTime: string;
+  seatLimitEnabled: boolean;
+  maxSeats: number;
 }
 
 interface FormField {
@@ -101,7 +107,14 @@ const ProgramCreation = () => {
       { id: '3', type: 'text', label: 'Phone', mandatory: true, helperText: 'Contact number' },
       { id: '4', type: 'dropdown', label: 'Gender', mandatory: false, helperText: '', options: ['Male', 'Female', 'Other', 'Prefer not to say'] },
       { id: '5', type: 'text', label: 'Age', mandatory: false, helperText: 'Age in years' },
-    ]
+    ],
+    approvalRequired: false,
+    registrationStartDate: '',
+    registrationStartTime: '',
+    registrationEndDate: '',
+    registrationEndTime: '',
+    seatLimitEnabled: false,
+    maxSeats: 0
   });
 
   const updateProgramData = (updates: Partial<ProgramData>) => {
@@ -193,7 +206,7 @@ const ProgramCreation = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
         {/* Header - Made Sticky */}
-        <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '50px' }}>
+        <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
           <div className="max-w-[1200px] mx-auto flex items-center h-full" style={{ paddingLeft: '10px' }}>
             <h1 className="text-2xl font-light text-stone-800">Program Creation</h1>
           </div>
@@ -397,6 +410,94 @@ const ProgramCreation = () => {
                             <Label htmlFor="hybrid" className="text-stone-800">Hybrid</Label>
                           </div>
                         </RadioGroup>
+                      </div>
+
+                      {/* Registration Settings Section */}
+                      <div className="space-y-6 bg-blue-50/30 rounded-2xl p-6 border border-blue-200/50">
+                        <h4 className="text-lg font-medium text-stone-800">Registration Settings</h4>
+                        
+                        {/* Approval Required Toggle */}
+                        <div className="flex items-center justify-between bg-white/60 rounded-2xl p-4 border border-stone-200/50">
+                          <div className="flex items-center gap-2">
+                            <Label className="text-stone-800 font-medium">Is approval required for registration?</Label>
+                            <Info className="w-4 h-4 text-stone-500" title="Approval allows manual review of each registration before confirmation" />
+                          </div>
+                          <Switch
+                            checked={programData.approvalRequired}
+                            onCheckedChange={(checked) => updateProgramData({ approvalRequired: checked })}
+                            className="data-[state=checked]:bg-orange-500"
+                          />
+                        </div>
+
+                        {/* Registration Period */}
+                        <div className="space-y-4">
+                          <Label className="text-stone-800 font-medium">Registration Period</Label>
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label className="text-stone-800">Program Registration Start Date & Time</Label>
+                              <div className="grid grid-cols-2 gap-2">
+                                <Input
+                                  type="date"
+                                  value={programData.registrationStartDate}
+                                  onChange={(e) => updateProgramData({ registrationStartDate: e.target.value })}
+                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                />
+                                <Input
+                                  type="time"
+                                  value={programData.registrationStartTime}
+                                  onChange={(e) => updateProgramData({ registrationStartTime: e.target.value })}
+                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                />
+                              </div>
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-stone-800">Program Registration End Date & Time</Label>
+                              <div className="grid grid-cols-2 gap-2">
+                                <Input
+                                  type="date"
+                                  value={programData.registrationEndDate}
+                                  onChange={(e) => updateProgramData({ registrationEndDate: e.target.value })}
+                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                />
+                                <Input
+                                  type="time"
+                                  value={programData.registrationEndTime}
+                                  onChange={(e) => updateProgramData({ registrationEndTime: e.target.value })}
+                                  className="rounded-2xl border-stone-200 bg-white/80"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Seat Limit Toggle */}
+                        <div className="space-y-4">
+                          <div className="flex items-center justify-between bg-white/60 rounded-2xl p-4 border border-stone-200/50">
+                            <div className="flex items-center gap-2">
+                              <Label className="text-stone-800 font-medium">Is there a limit on seats?</Label>
+                              <Info className="w-4 h-4 text-stone-500" title="Leave unchecked for unlimited participants" />
+                            </div>
+                            <Switch
+                              checked={programData.seatLimitEnabled}
+                              onCheckedChange={(checked) => updateProgramData({ seatLimitEnabled: checked })}
+                              className="data-[state=checked]:bg-orange-500"
+                            />
+                          </div>
+
+                          {programData.seatLimitEnabled && (
+                            <div className="space-y-2">
+                              <Label className="text-stone-800 font-medium">Enter maximum number of seats</Label>
+                              <Input
+                                type="number"
+                                min="1"
+                                value={programData.maxSeats || ''}
+                                onChange={(e) => updateProgramData({ maxSeats: Math.max(1, parseInt(e.target.value) || 0) })}
+                                className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                                placeholder="Enter maximum seats"
+                              />
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
