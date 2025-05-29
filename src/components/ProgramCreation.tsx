@@ -27,8 +27,10 @@ interface ProgramData {
   selectedSessions: string[];
   mode: 'online' | 'offline' | 'hybrid';
   paymentRequired: boolean;
-  sessionSchedules: Record<string, { startDate: string; endDate: string }>;
+  sessionSchedules: Record<string, { startDate: string; endDate: string; checkInTime: string; checkOutTime: string }>;
   venueAddress: string;
+  selectedVenue: string;
+  customVenue: string;
   travelRequired: boolean;
   hdbFee: number;
   msdFee: number;
@@ -46,6 +48,13 @@ interface FormField {
   helperText: string;
   options?: string[];
 }
+
+const predefinedVenues = [
+  'Leonia Holistic Destination, Bommarasipet, Shamirpet Mandal, Medchal-Malkajgiri District, Hyderabad - 500078',
+  'Ramoji Film City, Anajpur, Hayathnagar Mandal, Ranga Reddy District, Hyderabad - 501512',
+  'The Westin Hyderabad Mindspace, HITEC City, Madhapur, Hyderabad - 500081',
+  'Custom'
+];
 
 const programTypes: ProgramType[] = [
   {
@@ -78,6 +87,8 @@ const ProgramCreation = () => {
     paymentRequired: false,
     sessionSchedules: {},
     venueAddress: 'Leonia Holistic Destination, Bommarasipet, Shamirpet Mandal, Medchal-Malkajgiri District, Hyderabad - 500078',
+    selectedVenue: predefinedVenues[0],
+    customVenue: '',
     travelRequired: false,
     hdbFee: 0,
     msdFee: 0,
@@ -133,6 +144,32 @@ const ProgramCreation = () => {
     const end = new Date(start);
     end.setDate(start.getDate() + duration);
     return end.toISOString().split('T')[0];
+  };
+
+  const calculateCheckOutTime = (checkInTime: string) => {
+    if (!checkInTime) return '';
+    const [hours, minutes] = checkInTime.split(':').map(Number);
+    const checkInDate = new Date();
+    checkInDate.setHours(hours, minutes, 0, 0);
+    
+    // Add 6 hours
+    const checkOutDate = new Date(checkInDate.getTime() + 6 * 60 * 60 * 1000);
+    
+    return checkOutDate.toTimeString().slice(0, 5);
+  };
+
+  const handleVenueChange = (value: string) => {
+    updateProgramData({ 
+      selectedVenue: value,
+      venueAddress: value === 'Custom' ? programData.customVenue : value
+    });
+  };
+
+  const handleCustomVenueChange = (value: string) => {
+    updateProgramData({ 
+      customVenue: value,
+      venueAddress: value
+    });
   };
 
   const getStepTitle = () => {
@@ -345,7 +382,7 @@ const ProgramCreation = () => {
                     <Card key={session} className="border-stone-200/50 bg-stone-50/30">
                       <CardContent className="p-6">
                         <h4 className="font-medium text-stone-800 mb-4">{session}</h4>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-2 gap-4 mb-4">
                           <div className="space-y-2">
                             <Label className="text-stone-800">Start Date</Label>
                             <Input
@@ -357,7 +394,11 @@ const ProgramCreation = () => {
                                 updateProgramData({
                                   sessionSchedules: {
                                     ...programData.sessionSchedules,
-                                    [session]: { startDate, endDate }
+                                    [session]: { 
+                                      ...programData.sessionSchedules[session],
+                                      startDate, 
+                                      endDate 
+                                    }
                                   }
                                 });
                               }}
@@ -377,6 +418,43 @@ const ProgramCreation = () => {
                             />
                           </div>
                         </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label className="text-stone-800">Check-in Time</Label>
+                            <Input
+                              type="time"
+                              value={programData.sessionSchedules[session]?.checkInTime || ''}
+                              onChange={(e) => {
+                                const checkInTime = e.target.value;
+                                const checkOutTime = calculateCheckOutTime(checkInTime);
+                                updateProgramData({
+                                  sessionSchedules: {
+                                    ...programData.sessionSchedules,
+                                    [session]: { 
+                                      ...programData.sessionSchedules[session],
+                                      checkInTime, 
+                                      checkOutTime 
+                                    }
+                                  }
+                                });
+                              }}
+                              className="rounded-2xl border-stone-200 bg-white/80"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label className="text-stone-800 flex items-center gap-2">
+                              Check-out Time
+                              <Info className="w-4 h-4 text-stone-500" />
+                            </Label>
+                            <Input
+                              type="time"
+                              value={programData.sessionSchedules[session]?.checkOutTime || ''}
+                              disabled
+                              className="rounded-2xl border-stone-200 bg-stone-50"
+                            />
+                            <p className="text-xs text-stone-500">Auto-calculated (6 hours after check-in)</p>
+                          </div>
+                        </div>
                       </CardContent>
                     </Card>
                   ))}
@@ -386,12 +464,28 @@ const ProgramCreation = () => {
                   <div className="space-y-6 animate-fade-in">
                     <div className="space-y-2">
                       <Label className="text-stone-800 font-medium">Venue Address</Label>
-                      <Textarea
-                        value={programData.venueAddress}
-                        readOnly
-                        className="rounded-2xl border-stone-200 bg-stone-50 text-stone-700"
-                        rows={3}
-                      />
+                      <Select value={programData.selectedVenue} onValueChange={handleVenueChange}>
+                        <SelectTrigger className="rounded-2xl border-stone-200 bg-white/80">
+                          <SelectValue placeholder="Select venue" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-white border border-stone-200 shadow-lg rounded-xl z-50">
+                          {predefinedVenues.map((venue) => (
+                            <SelectItem key={venue} value={venue} className="hover:bg-stone-50">
+                              {venue === 'Custom' ? 'Custom Address' : venue}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      
+                      {programData.selectedVenue === 'Custom' && (
+                        <Textarea
+                          value={programData.customVenue}
+                          onChange={(e) => handleCustomVenueChange(e.target.value)}
+                          className="rounded-2xl border-stone-200 bg-white/80 mt-2"
+                          placeholder="Enter custom venue address"
+                          rows={3}
+                        />
+                      )}
                     </div>
 
                     <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
