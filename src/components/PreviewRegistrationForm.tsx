@@ -256,8 +256,8 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto">
+      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-4 shadow-sm sticky top-0 z-50">
+        <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl font-light text-stone-800">Preview Registration Form</h1>
           <p className="text-stone-600 mt-1">
             Based on your selections, we've generated the form your participants will fill out. You can proceed or customize it.
@@ -266,7 +266,7 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-6 py-8">
         <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
           <div className="p-8">
             {/* User Type Toggle */}
@@ -352,8 +352,8 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </div>
 
       {/* Footer Navigation */}
-      <div className="bg-gradient-to-r from-stone-50 to-orange-50/50 px-8 py-6 border-t border-stone-200/50 sticky bottom-0">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+      <div className="bg-gradient-to-r from-stone-50 to-orange-50/50 px-8 py-6 border-t border-stone-200/50 sticky bottom-0 z-50">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Button
             onClick={onBack}
             variant="outline"
