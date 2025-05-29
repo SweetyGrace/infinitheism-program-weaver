@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart, CheckCircle, Edit, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -30,6 +31,8 @@ interface ProgramData {
   layoutStyle: 'single-column' | 'two-column' | 'question-by-question';
   customFormFields: any[];
   formSettings: Record<string, any>;
+  userType: 'new' | 'existing';
+  formFields: any[];
 }
 
 enum ProgramType {
@@ -58,7 +61,9 @@ const ProgramCreation = () => {
     refundPolicy: '',
     layoutStyle: 'single-column',
     customFormFields: [],
-    formSettings: {}
+    formSettings: {},
+    userType: 'new',
+    formFields: []
   });
   const [showFormPreview, setShowFormPreview] = useState(false);
 
@@ -422,28 +427,5 @@ const Step2: React.FC<Step2Props> = ({ programData, handleInputChange, setProgra
   );
 };
 
-interface NavItemProps {
-  step: number;
-  currentStep: number;
-  label: string;
-  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-}
-
-const NavItem: React.FC<NavItemProps> = ({ step, currentStep, label, icon: Icon }) => {
-  const isActive = step === currentStep;
-  return (
-    <Button
-      variant="ghost"
-      className={cn(
-        "justify-start rounded-xl w-full",
-        isActive ? "bg-orange-50 text-orange-700 font-medium" : "text-stone-600 hover:bg-stone-50"
-      )}
-      onClick={() => alert(`Go to step ${step}`)}
-    >
-      <Icon className="w-4 h-4 mr-2" />
-      {label}
-    </Button>
-  );
-};
-
 export default ProgramCreation;
+
