@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart, CheckCircle, Edit, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,12 @@ interface ProgramData {
   msdFee: number;
   venueAddress: string;
   travelRequired: boolean;
+  selectedSessions: string[];
+  sessionSchedules: Record<string, string>;
+  refundPolicy: string;
+  layoutStyle: 'single-column' | 'two-column' | 'question-by-question';
+  customFormFields: any[];
+  formSettings: Record<string, any>;
 }
 
 enum ProgramType {
@@ -45,7 +52,13 @@ const ProgramCreation = () => {
     hdbFee: 0,
     msdFee: 0,
     venueAddress: '',
-    travelRequired: false
+    travelRequired: false,
+    selectedSessions: [],
+    sessionSchedules: {},
+    refundPolicy: '',
+    layoutStyle: 'single-column',
+    customFormFields: [],
+    formSettings: {}
   });
   const [showFormPreview, setShowFormPreview] = useState(false);
 
@@ -58,7 +71,8 @@ const ProgramCreation = () => {
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type } = e.target;
+    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined;
     setProgramData(prevData => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value
@@ -170,6 +184,7 @@ const ProgramCreation = () => {
                 <Step2
                   programData={programData}
                   handleInputChange={handleInputChange}
+                  setProgramData={setProgramData}
                   nextStep={nextStep}
                   prevStep={prevStep}
                 />
@@ -273,11 +288,12 @@ const Step1: React.FC<Step1Props> = ({ programData, handleInputChange, handleSel
 interface Step2Props {
   programData: ProgramData;
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  setProgramData: React.Dispatch<React.SetStateAction<ProgramData>>;
   nextStep: () => void;
   prevStep: () => void;
 }
 
-const Step2: React.FC<Step2Props> = ({ programData, handleInputChange, nextStep, prevStep }) => {
+const Step2: React.FC<Step2Props> = ({ programData, handleInputChange, setProgramData, nextStep, prevStep }) => {
   return (
     <div className="space-y-6">
       <h2 className="text-xl font-medium text-stone-800">Mode & Fees</h2>
@@ -403,6 +419,30 @@ const Step2: React.FC<Step2Props> = ({ programData, handleInputChange, nextStep,
         </Button>
       </div>
     </div>
+  );
+};
+
+interface NavItemProps {
+  step: number;
+  currentStep: number;
+  label: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}
+
+const NavItem: React.FC<NavItemProps> = ({ step, currentStep, label, icon: Icon }) => {
+  const isActive = step === currentStep;
+  return (
+    <Button
+      variant="ghost"
+      className={cn(
+        "justify-start rounded-xl w-full",
+        isActive ? "bg-orange-50 text-orange-700 font-medium" : "text-stone-600 hover:bg-stone-50"
+      )}
+      onClick={() => alert(`Go to step ${step}`)}
+    >
+      <Icon className="w-4 h-4 mr-2" />
+      {label}
+    </Button>
   );
 };
 
