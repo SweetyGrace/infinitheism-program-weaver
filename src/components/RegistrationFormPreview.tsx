@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChevronLeft, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -37,8 +36,8 @@ interface ProgramData {
   sessionSchedules: Record<string, { startDate: string; endDate: string }>;
   venueAddress: string;
   travelRequired: boolean;
-  programFee: number;
-  currency: string;
+  hdbFee: number;
+  msdFee: number;
   refundPolicy: string;
   layoutStyle: 'single-column' | 'two-column' | 'question-by-question';
   userType: 'new' | 'existing';
@@ -146,10 +145,18 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
             <h3 className="text-lg font-medium text-stone-800 mb-4">Payment Information</h3>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-stone-800">Program Fee *</Label>
+                <Label className="text-stone-800">HDB Fee *</Label>
                 <Input 
                   className="rounded-2xl border-stone-200" 
-                  value={`${programData.currency} ${programData.programFee}`}
+                  value={`₹ ${programData.hdbFee}`}
+                  readOnly
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-stone-800">MSD Fee *</Label>
+                <Input 
+                  className="rounded-2xl border-stone-200" 
+                  value={`₹ ${programData.msdFee}`}
                   readOnly
                 />
               </div>
@@ -196,10 +203,18 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
               <h3 className="text-lg font-medium text-stone-800 mb-4">Payment Information</h3>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-stone-800">Program Fee *</Label>
+                  <Label className="text-stone-800">HDB Fee *</Label>
                   <Input 
                     className="rounded-2xl border-stone-200" 
-                    value={`${programData.currency} ${programData.programFee}`}
+                    value={`₹ ${programData.hdbFee}`}
+                    readOnly
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-stone-800">MSD Fee *</Label>
+                  <Input 
+                    className="rounded-2xl border-stone-200" 
+                    value={`₹ ${programData.msdFee}`}
                     readOnly
                   />
                 </div>

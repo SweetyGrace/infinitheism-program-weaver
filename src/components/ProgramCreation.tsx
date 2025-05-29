@@ -30,8 +30,8 @@ interface ProgramData {
   sessionSchedules: Record<string, { startDate: string; endDate: string }>;
   venueAddress: string;
   travelRequired: boolean;
-  programFee: number;
-  currency: string;
+  hdbFee: number;
+  msdFee: number;
   refundPolicy: string;
   layoutStyle: 'single-column' | 'two-column' | 'question-by-question';
   userType: 'new' | 'existing';
@@ -79,8 +79,8 @@ const ProgramCreation = () => {
     sessionSchedules: {},
     venueAddress: '',
     travelRequired: false,
-    programFee: 0,
-    currency: 'USD',
+    hdbFee: 0,
+    msdFee: 0,
     refundPolicy: '',
     layoutStyle: 'single-column',
     userType: 'new',
@@ -426,28 +426,24 @@ const ProgramCreation = () => {
                   <div className="space-y-6 animate-fade-in">
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label className="text-stone-800 font-medium">Program Fee</Label>
+                        <Label className="text-stone-800 font-medium">HDB Fee</Label>
                         <Input
                           type="number"
-                          value={programData.programFee}
-                          onChange={(e) => updateProgramData({ programFee: Number(e.target.value) })}
+                          value={programData.hdbFee}
+                          onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
                           className="rounded-2xl border-stone-200 bg-white/80"
                           placeholder="0.00"
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-stone-800 font-medium">Currency</Label>
-                        <Select value={programData.currency} onValueChange={(value) => updateProgramData({ currency: value })}>
-                          <SelectTrigger className="rounded-2xl border-stone-200 bg-white/80">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="USD">USD</SelectItem>
-                            <SelectItem value="EUR">EUR</SelectItem>
-                            <SelectItem value="GBP">GBP</SelectItem>
-                            <SelectItem value="INR">INR</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Label className="text-stone-800 font-medium">MSD Fee</Label>
+                        <Input
+                          type="number"
+                          value={programData.msdFee}
+                          onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
+                          className="rounded-2xl border-stone-200 bg-white/80"
+                          placeholder="0.00"
+                        />
                       </div>
                     </div>
 
