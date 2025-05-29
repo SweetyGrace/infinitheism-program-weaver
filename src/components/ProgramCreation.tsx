@@ -1,5 +1,3 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart, CheckCircle, Edit, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -270,25 +268,15 @@ const ProgramCreation = () => {
 
         {/* Footer */}
         <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-stone-200/50 px-6 py-4 shadow-lg">
-          <div className="max-w-[1200px] mx-auto flex items-center justify-between">
+          <div className="max-w-[1200px] mx-auto flex items-center justify-end">
             <Button
-              variant="ghost"
-              className="text-stone-600 hover:text-stone-800 hover:bg-stone-50 rounded-2xl"
+              onClick={() => setCurrentStep(1)}
+              disabled={!programData.programType}
+              className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
             >
-              <Save className="w-4 h-4 mr-2" />
-              Save as Draft
+              Next
+              <ChevronRight className="w-4 h-4 ml-2" />
             </Button>
-
-            <div className="flex items-center space-x-4">
-              <Button
-                onClick={() => setCurrentStep(1)}
-                disabled={!programData.programType}
-                className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
-              >
-                Next
-                <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-            </div>
           </div>
         </div>
       </div>
@@ -748,7 +736,7 @@ const ProgramCreation = () => {
               <Button
                 onClick={() => setCurrentStep(currentStep - 1)}
                 variant="outline"
-                className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
+                className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50 text-base font-medium transition-all duration-300"
               >
                 Back
               </Button>
@@ -824,7 +812,7 @@ const ProgramCreation = () => {
                 {/* Secondary Actions */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Button
-                    onClick={() => setCurrentStep(3)}
+                    onClick={() => setCurrentStep(1)}
                     variant="outline"
                     className="h-12 rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50 text-base font-medium transition-all duration-300"
                   >
@@ -1047,4 +1035,3 @@ const ProgramCreation = () => {
 };
 
 export default ProgramCreation;
-
