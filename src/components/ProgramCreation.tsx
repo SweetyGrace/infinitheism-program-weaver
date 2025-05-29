@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -78,7 +79,6 @@ const programTypes: ProgramType[] = [
 const ProgramCreation = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [showFormPreview, setShowFormPreview] = useState(false);
-  const [activeSection, setActiveSection] = useState(0); // 0: Program Type, 1: Program Basics, 2: Schedule & Logistics
   const [programData, setProgramData] = useState<ProgramData>({
     programType: null,
     programName: '',
@@ -104,30 +104,6 @@ const ProgramCreation = () => {
     ]
   });
 
-  // Scroll tracking for active section
-  useEffect(() => {
-    const handleScroll = () => {
-      const programTypeSection = document.getElementById('program-type-section');
-      const programBasicsSection = document.getElementById('program-basics-section');
-      const scheduleSection = document.getElementById('schedule-section');
-      
-      if (programTypeSection && programBasicsSection && scheduleSection) {
-        const scrollY = window.scrollY + 200; // offset for better UX
-        
-        if (scrollY < programBasicsSection.offsetTop) {
-          setActiveSection(0);
-        } else if (scrollY < scheduleSection.offsetTop) {
-          setActiveSection(1);
-        } else {
-          setActiveSection(2);
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const updateProgramData = (updates: Partial<ProgramData>) => {
     setProgramData(prev => ({ ...prev, ...updates }));
   };
@@ -137,13 +113,6 @@ const ProgramCreation = () => {
       programType: type,
       selectedSessions: type.defaultSessions
     });
-  };
-
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
   };
 
   const calculateEndDate = (startDate: string, sessionType: string) => {
@@ -219,31 +188,99 @@ const ProgramCreation = () => {
     );
   }
 
-  // Combined page view (steps 0-2)
-  if (currentStep < 3) {
+  // Page 1: Program Type Selection (Standalone)
+  if (currentStep === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
-        {/* Fixed Header */}
-        <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm fixed top-0 left-0 right-0 z-40" style={{ height: '66px' }}>
+        {/* Header */}
+        <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '50px' }}>
           <div className="max-w-[1200px] mx-auto flex items-center h-full" style={{ paddingLeft: '10px' }}>
             <h1 className="text-2xl font-light text-stone-800">Program Creation</h1>
           </div>
         </div>
 
-        <div className="flex" style={{ marginTop: '66px' }}>
+        {/* Main Content */}
+        <div className="max-w-[1200px] mx-auto px-6 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {programTypes.map((type) => {
+              const IconComponent = type.icon;
+              const isSelected = programData.programType?.id === type.id;
+              return (
+                <Card 
+                  key={type.id} 
+                  className={cn(
+                    "cursor-pointer border-stone-200/50 hover:border-orange-300 transition-all duration-300 hover:shadow-lg group bg-gradient-to-br from-white to-stone-50/50",
+                    isSelected && "border-orange-300 bg-orange-50/50 shadow-lg"
+                  )}
+                  onClick={() => selectProgramType(type)}
+                >
+                  <CardContent className="p-6 text-center">
+                    <div className={cn(
+                      "w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center transition-transform duration-300",
+                      isSelected ? "scale-110" : "group-hover:scale-110"
+                    )}>
+                      <IconComponent className="w-8 h-8 text-orange-600" />
+                    </div>
+                    <h3 className="text-lg font-medium text-stone-800">{type.name}</h3>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-stone-200/50 px-6 py-4 shadow-lg">
+          <div className="max-w-[1200px] mx-auto flex items-center justify-between">
+            <Button
+              variant="ghost"
+              className="text-stone-600 hover:text-stone-800 hover:bg-stone-50 rounded-2xl"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save as Draft
+            </Button>
+
+            <div className="flex items-center space-x-4">
+              <Button
+                onClick={() => setCurrentStep(1)}
+                disabled={!programData.programType}
+                className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
+              >
+                Next
+                <ChevronRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Pages 2-3: Program Basics and Schedule & Logistics with Stepper
+  if (currentStep === 1 || currentStep === 2) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
+        {/* Header */}
+        <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
+          <div className="max-w-[1200px] mx-auto flex items-center h-full" style={{ paddingLeft: '10px' }}>
+            <h1 className="text-2xl font-light text-stone-800">Program Creation</h1>
+          </div>
+        </div>
+
+        <div className="flex" style={{ marginTop: '66px', paddingBottom: '80px' }}>
           {/* Left Vertical Stepper */}
-          <div className="w-64 bg-white/80 backdrop-blur-sm border-r border-stone-200/30 fixed left-0 top-16 bottom-0 p-6">
+          <div className="w-64 bg-white/80 backdrop-blur-sm border-r border-stone-200/30 fixed left-0 top-16 bottom-20 p-6">
             <div className="space-y-6">
               <div 
                 className={cn(
                   "flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all",
-                  activeSection === 1 ? "bg-orange-100 text-orange-800" : "text-stone-600 hover:bg-stone-50"
+                  currentStep === 1 ? "bg-orange-100 text-orange-800" : "text-stone-600 hover:bg-stone-50"
                 )}
-                onClick={() => scrollToSection('program-basics-section')}
+                onClick={() => setCurrentStep(1)}
               >
                 <div className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  activeSection === 1 ? "bg-orange-500 text-white" : "bg-stone-200 text-stone-600"
+                  currentStep === 1 ? "bg-orange-500 text-white" : "bg-stone-200 text-stone-600"
                 )}>
                   1
                 </div>
@@ -253,13 +290,13 @@ const ProgramCreation = () => {
               <div 
                 className={cn(
                   "flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all",
-                  activeSection === 2 ? "bg-orange-100 text-orange-800" : "text-stone-600 hover:bg-stone-50"
+                  currentStep === 2 ? "bg-orange-100 text-orange-800" : "text-stone-600 hover:bg-stone-50"
                 )}
-                onClick={() => scrollToSection('schedule-section')}
+                onClick={() => setCurrentStep(2)}
               >
                 <div className={cn(
                   "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  activeSection === 2 ? "bg-orange-500 text-white" : "bg-stone-200 text-stone-600"
+                  currentStep === 2 ? "bg-orange-500 text-white" : "bg-stone-200 text-stone-600"
                 )}>
                   2
                 </div>
@@ -272,51 +309,9 @@ const ProgramCreation = () => {
           <div className="flex-1 ml-64">
             <div className="max-w-[1200px] mx-auto px-6 py-8">
               
-              {/* Program Type Selection Section */}
-              <section id="program-type-section" className="mb-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl">
-                  {programTypes.map((type) => {
-                    const IconComponent = type.icon;
-                    const isSelected = programData.programType?.id === type.id;
-                    return (
-                      <Card 
-                        key={type.id} 
-                        className={cn(
-                          "cursor-pointer border-stone-200/50 hover:border-orange-300 transition-all duration-300 hover:shadow-lg group bg-gradient-to-br from-white to-stone-50/50",
-                          isSelected && "border-orange-300 bg-orange-50/50 shadow-lg"
-                        )}
-                        onClick={() => selectProgramType(type)}
-                      >
-                        <CardContent className="p-6 text-center">
-                          <div className={cn(
-                            "w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center transition-transform duration-300",
-                            isSelected ? "scale-110" : "group-hover:scale-110"
-                          )}>
-                            <IconComponent className="w-8 h-8 text-orange-600" />
-                          </div>
-                          <h3 className="text-lg font-medium text-stone-800">{type.name}</h3>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-                
-                {programData.programType && (
-                  <div className="flex justify-start mt-8">
-                    <Button
-                      onClick={() => scrollToSection('program-basics-section')}
-                      className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg px-8"
-                    >
-                      Next
-                      <ChevronRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </div>
-                )}
-              </section>
-
-              {/* Program Basics Section */}
-              <section id="program-basics-section" className="mb-16">
-                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8">
+              {/* Page 2: Program Basics */}
+              {currentStep === 1 && (
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8 animate-fade-in">
                   
                   {/* Banner Section */}
                   {programData.programType && (
@@ -389,11 +384,11 @@ const ProgramCreation = () => {
                     </div>
                   </div>
                 </div>
-              </section>
+              )}
 
-              {/* Schedule & Logistics Section */}
-              <section id="schedule-section" className="mb-16">
-                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8">
+              {/* Page 3: Schedule & Logistics */}
+              {currentStep === 2 && (
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden p-8 animate-fade-in">
                   <div className="space-y-8">
                     
                     <div className="space-y-6">
@@ -521,19 +516,49 @@ const ProgramCreation = () => {
                         </div>
                       </div>
                     )}
-
-                    <div className="flex justify-end">
-                      <Button
-                        onClick={() => setCurrentStep(3)}
-                        className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg px-8"
-                      >
-                        Continue to Layout & Settings
-                        <ChevronRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </div>
                   </div>
                 </div>
-              </section>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-sm border-t border-stone-200/50 px-6 py-4 shadow-lg">
+          <div className="max-w-[1200px] mx-auto flex items-center justify-between">
+            <Button
+              variant="ghost"
+              className="text-stone-600 hover:text-stone-800 hover:bg-stone-50 rounded-2xl"
+            >
+              <Save className="w-4 h-4 mr-2" />
+              Save as Draft
+            </Button>
+
+            <div className="flex items-center space-x-4">
+              <Button
+                onClick={() => setCurrentStep(currentStep - 1)}
+                variant="outline"
+                className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
+              >
+                Back
+              </Button>
+              {currentStep === 1 ? (
+                <Button
+                  onClick={() => setCurrentStep(2)}
+                  className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => setCurrentStep(3)}
+                  className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
+                >
+                  Continue to Layout & Settings
+                  <ChevronRight className="w-4 h-4 ml-2" />
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -694,7 +719,7 @@ const ProgramCreation = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Button
-                  onClick={() => setCurrentStep(currentStep === 3 ? 0 : currentStep - 1)}
+                  onClick={() => setCurrentStep(currentStep === 3 ? 2 : currentStep - 1)}
                   variant="outline"
                   className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
                 >
