@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, LayoutList, ListChecks, LucideIcon, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -91,28 +92,33 @@ const ProgramCreation = () => {
                   What type of program are you creating?
                 </Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-                  {programTypes.map((type) => (
-                    <Card 
-                      key={type.id}
-                      className={cn(
-                        "cursor-pointer transition-all duration-200 border-2 hover:shadow-lg w-full",
-                        formData.programType === type.id 
-                          ? "border-orange-400 bg-orange-50/50 shadow-md" 
-                          : "border-stone-200 hover:border-orange-200"
-                      )}
-                      onClick={() => setFormData(prev => ({ ...prev, programType: type.id }))}
-                    >
-                      <CardContent className="p-6 text-left">
-                        <div className="flex items-start space-x-4">
-                          <div className="text-2xl">{type.icon}</div>
-                          <div className="flex-1">
-                            <h3 className="font-medium text-stone-800 mb-2">{type.name}</h3>
-                            <p className="text-sm text-stone-600 leading-relaxed">{type.description}</p>
+                  {programTypes.map((type) => {
+                    const IconComponent = type.icon;
+                    return (
+                      <Card 
+                        key={type.id}
+                        className={cn(
+                          "cursor-pointer transition-all duration-200 border-2 hover:shadow-lg w-full",
+                          formData.programType === type.id 
+                            ? "border-orange-400 bg-orange-50/50 shadow-md" 
+                            : "border-stone-200 hover:border-orange-200"
+                        )}
+                        onClick={() => setFormData(prev => ({ ...prev, programType: type.id }))}
+                      >
+                        <CardContent className="p-6 text-left">
+                          <div className="flex items-start space-x-4">
+                            <div className="text-2xl">
+                              <IconComponent />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="font-medium text-stone-800 mb-2">{type.name}</h3>
+                              <p className="text-sm text-stone-600 leading-relaxed">{type.description}</p>
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -307,33 +313,6 @@ const ProgramCreation = () => {
         return <div>Unknown step</div>;
     }
   };
-
-  const renderNavigation = () => (
-    <div className="flex items-center justify-between">
-      <Button
-        onClick={handleBack}
-        variant="outline"
-        disabled={currentStep === 1}
-        className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50 disabled:opacity-50"
-      >
-        <ChevronLeft className="w-4 h-4 mr-2" />
-        Back
-      </Button>
-      
-      <div className="flex items-center space-x-4">
-        {currentStep < 3 && (
-          <Button
-            onClick={handleNext}
-            disabled={!canProceed()}
-            className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white rounded-2xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed px-8"
-          >
-            {currentStep === 2 ? 'Create Program' : 'Next Step'}
-            <ChevronRight className="w-4 h-4 ml-2" />
-          </Button>
-        )}
-      </div>
-    </div>
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
