@@ -105,24 +105,24 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
     const isPrefilledForExisting = previewAsExisting && field.prefilled;
     
     return (
-      <div key={field.id} className="space-y-2">
+      <div key={field.id} className="space-y-3">
         <Label className={cn(
-          "text-stone-800 flex items-center gap-1",
-          isPrefilledForExisting && "text-stone-600"
+          "label-text text-gray-900 flex items-center gap-1",
+          isPrefilledForExisting && "text-gray-600"
         )}>
           {field.label}
           {field.mandatory && <span className="text-red-500">*</span>}
-          {isPrefilledForExisting && <Info className="w-3 h-3 text-stone-500" />}
+          {isPrefilledForExisting && <Info className="w-3 h-3 text-blue-500" />}
         </Label>
         {field.helperText && (
-          <p className="text-xs text-stone-600">{field.helperText}</p>
+          <p className="description-text">{field.helperText}</p>
         )}
         
         {field.type === 'text' && (
           <Input 
             className={cn(
-              "rounded-2xl border-stone-200",
-              isPrefilledForExisting && "bg-stone-50 text-stone-600"
+              "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              isPrefilledForExisting && "bg-gray-50 text-gray-600"
             )}
             placeholder={isPrefilledForExisting ? "John Doe" : `Enter ${field.label.toLowerCase()}`}
             value={isPrefilledForExisting ? "John Doe" : ""}
@@ -133,7 +133,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         {field.type === 'date' && (
           <Input 
             type="date" 
-            className="rounded-2xl border-stone-200" 
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" 
             readOnly
           />
         )}
@@ -141,14 +141,14 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         {field.type === 'file' && (
           <Input 
             type="file" 
-            className="rounded-2xl border-stone-200" 
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
             disabled
           />
         )}
         
         {field.type === 'dropdown' && (
           <Select disabled>
-            <SelectTrigger className="rounded-2xl border-stone-200">
+            <SelectTrigger className="rounded-md border border-input">
               <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>
@@ -161,7 +161,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         
         {field.type === 'paragraph' && (
           <Textarea 
-            className="rounded-2xl border-stone-200" 
+            className="flex w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" 
             placeholder={`Enter ${field.label.toLowerCase()}`}
             readOnly
           />
@@ -174,7 +174,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
     <div className="space-y-6">
       {/* Existing User Info Banner */}
       {previewAsExisting && (
-        <Alert className="border-blue-200 bg-blue-50/50">
+        <Alert className="border-blue-200 bg-blue-50">
           <Info className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-blue-800">
             We've prefilled some information for returning seekers. Only the remaining fields are shown below.
@@ -184,10 +184,10 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
       {/* Personal Information Section */}
       {groupedFields.personal.length > 0 && (
-        <Card className="border-stone-200/50">
+        <Card className="border-0 shadow-lg card-hover">
           <CardContent className="p-6">
-            <h3 className="text-lg font-medium text-stone-800 mb-4">Personal Information</h3>
-            <div className="space-y-4">
+            <h3 className="section-title mb-4">Personal Information</h3>
+            <div className="space-y-6">
               {groupedFields.personal.map((field, index) => renderFormField(field, index))}
             </div>
           </CardContent>
@@ -196,22 +196,22 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       
       {/* Payment Information */}
       {programData.paymentRequired && (
-        <Card className="border-stone-200/50">
+        <Card className="border-0 shadow-lg card-hover">
           <CardContent className="p-6">
-            <h3 className="text-lg font-medium text-stone-800 mb-4">Payment Information</h3>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-stone-800">HDB Fee *</Label>
+            <h3 className="section-title mb-4">Payment Information</h3>
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <Label className="label-text text-gray-900">HDB Fee *</Label>
                 <Input 
-                  className="rounded-2xl border-stone-200" 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
                   value={`₹ ${programData.hdbFee}`}
                   readOnly
                 />
               </div>
-              <div className="space-y-2">
-                <Label className="text-stone-800">MSD Fee *</Label>
+              <div className="space-y-3">
+                <Label className="label-text text-gray-900">MSD Fee *</Label>
                 <Input 
-                  className="rounded-2xl border-stone-200" 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
                   value={`₹ ${programData.msdFee}`}
                   readOnly
                 />
@@ -223,10 +223,10 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       
       {/* Travel Information */}
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && groupedFields.travel.length > 0 && (
-        <Card className="border-stone-200/50">
+        <Card className="border-0 shadow-lg card-hover">
           <CardContent className="p-6">
-            <h3 className="text-lg font-medium text-stone-800 mb-4">Travel Information</h3>
-            <div className="space-y-4">
+            <h3 className="section-title mb-4">Travel Information</h3>
+            <div className="space-y-6">
               {groupedFields.travel.map((field, index) => renderFormField(field, index))}
             </div>
           </CardContent>
@@ -235,12 +235,12 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
       {/* Show message if no fields are visible for existing user */}
       {previewAsExisting && visibleFields.length === 0 && !programData.paymentRequired && (
-        <Card className="border-stone-200/50">
+        <Card className="border-0 shadow-lg">
           <CardContent className="p-6 text-center">
-            <div className="text-stone-600">
+            <div className="text-gray-600">
               <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
-              <p className="text-lg font-medium text-stone-800 mb-2">All Set!</p>
-              <p>All required information is already available for returning seekers.</p>
+              <p className="section-title mb-2">All Set!</p>
+              <p className="description-text">All required information is already available for returning seekers.</p>
             </div>
           </CardContent>
         </Card>
@@ -252,7 +252,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
     <div className="space-y-6">
       {/* Existing User Info Banner */}
       {previewAsExisting && (
-        <Alert className="border-blue-200 bg-blue-50/50">
+        <Alert className="border-blue-200 bg-blue-50">
           <Info className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-blue-800">
             We've prefilled some information for returning seekers. Only the remaining fields are shown below.
@@ -260,13 +260,13 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         </Alert>
       )}
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid gap-6 md:grid-cols-2">
         {/* Personal Information */}
         {groupedFields.personal.length > 0 && (
-          <Card className="border-stone-200/50">
+          <Card className="border-0 shadow-lg card-hover">
             <CardContent className="p-6">
-              <h3 className="text-lg font-medium text-stone-800 mb-4">Personal Information</h3>
-              <div className="space-y-4">
+              <h3 className="section-title mb-4">Personal Information</h3>
+              <div className="space-y-6">
                 {groupedFields.personal.map((field, index) => renderFormField(field, index))}
               </div>
             </CardContent>
@@ -276,22 +276,22 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         <div className="space-y-6">
           {/* Payment Information */}
           {programData.paymentRequired && (
-            <Card className="border-stone-200/50">
+            <Card className="border-0 shadow-lg card-hover">
               <CardContent className="p-6">
-                <h3 className="text-lg font-medium text-stone-800 mb-4">Payment Information</h3>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-stone-800">HDB Fee *</Label>
+                <h3 className="section-title mb-4">Payment Information</h3>
+                <div className="space-y-6">
+                  <div className="space-y-3">
+                    <Label className="label-text text-gray-900">HDB Fee *</Label>
                     <Input 
-                      className="rounded-2xl border-stone-200" 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
                       value={`₹ ${programData.hdbFee}`}
                       readOnly
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-stone-800">MSD Fee *</Label>
+                  <div className="space-y-3">
+                    <Label className="label-text text-gray-900">MSD Fee *</Label>
                     <Input 
-                      className="rounded-2xl border-stone-200" 
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
                       value={`₹ ${programData.msdFee}`}
                       readOnly
                     />
@@ -303,10 +303,10 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
           
           {/* Travel Information */}
           {(programData.mode === 'offline' || programData.mode === 'hybrid') && groupedFields.travel.length > 0 && (
-            <Card className="border-stone-200/50">
+            <Card className="border-0 shadow-lg card-hover">
               <CardContent className="p-6">
-                <h3 className="text-lg font-medium text-stone-800 mb-4">Travel Information</h3>
-                <div className="space-y-4">
+                <h3 className="section-title mb-4">Travel Information</h3>
+                <div className="space-y-6">
                   {groupedFields.travel.map((field, index) => renderFormField(field, index))}
                 </div>
               </CardContent>
@@ -317,12 +317,12 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
       {/* Show message if no fields are visible for existing user */}
       {previewAsExisting && visibleFields.length === 0 && !programData.paymentRequired && (
-        <Card className="border-stone-200/50 col-span-2">
+        <Card className="border-0 shadow-lg col-span-2">
           <CardContent className="p-6 text-center">
-            <div className="text-stone-600">
+            <div className="text-gray-600">
               <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
-              <p className="text-lg font-medium text-stone-800 mb-2">All Set!</p>
-              <p>All required information is already available for returning seekers.</p>
+              <p className="section-title mb-2">All Set!</p>
+              <p className="description-text">All required information is already available for returning seekers.</p>
             </div>
           </CardContent>
         </Card>
@@ -337,7 +337,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       <div className="space-y-6">
         {/* Existing User Info Banner */}
         {previewAsExisting && (
-          <Alert className="border-blue-200 bg-blue-50/50">
+          <Alert className="border-blue-200 bg-blue-50">
             <Info className="h-4 w-4 text-blue-600" />
             <AlertDescription className="text-blue-800">
               We've prefilled some information for returning seekers. Only the remaining fields are shown below.
@@ -346,13 +346,13 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         )}
 
         {currentField ? (
-          <Card className="border-stone-200/50">
+          <Card className="border-0 shadow-lg">
             <CardContent className="p-6">
-              <h3 className="text-lg font-medium text-stone-800 mb-4">Question 1 of {visibleFields.length}</h3>
-              <div className="space-y-4">
+              <h3 className="section-title mb-4">Question 1 of {visibleFields.length}</h3>
+              <div className="space-y-6">
                 {renderFormField(currentField, 0)}
                 <div className="flex justify-end pt-4">
-                  <Button disabled className="bg-orange-400 text-white rounded-2xl">
+                  <Button disabled className="primary-button">
                     Next Question
                   </Button>
                 </div>
@@ -360,18 +360,18 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
             </CardContent>
           </Card>
         ) : (
-          <Card className="border-stone-200/50">
+          <Card className="border-0 shadow-lg">
             <CardContent className="p-6 text-center">
-              <div className="text-stone-600">
+              <div className="text-gray-600">
                 <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
-                <p className="text-lg font-medium text-stone-800 mb-2">All Set!</p>
-                <p>All required information is already available for returning seekers.</p>
+                <p className="section-title mb-2">All Set!</p>
+                <p className="description-text">All required information is already available for returning seekers.</p>
               </div>
             </CardContent>
           </Card>
         )}
         
-        <p className="text-sm text-stone-600 text-center italic">
+        <p className="description-text text-center italic">
           Preview shows first question only. Actual form will show one question at a time.
         </p>
       </div>
@@ -379,50 +379,50 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 fade-in">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl font-light text-stone-800">Preview Registration Form</h1>
-          <p className="text-stone-600 mt-1">
+      <div className="bg-white shadow-sm border-b px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="main-title">Preview Registration Form</h1>
+          <p className="description-text mt-2">
             Based on your selections, we've generated the form your participants will fill out. You can proceed or customize it.
           </p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-white rounded-lg shadow-xl border-0 overflow-hidden">
           <div className="p-8">
             {/* User Type Toggle */}
-            <div className="flex items-center justify-between mb-8 p-4 bg-orange-50/50 rounded-2xl border border-orange-200/50">
+            <div className="flex items-center justify-between mb-8 p-6 bg-gray-50 rounded-lg">
               <div>
-                <Label className="text-stone-800 font-medium">Preview Mode</Label>
-                <p className="text-sm text-stone-600">Toggle to see how the form appears for different user types</p>
+                <Label className="label-text text-gray-900 font-medium">Preview Mode</Label>
+                <p className="description-text mt-1">Toggle to see how the form appears for different user types</p>
               </div>
               <div className="flex items-center space-x-3">
-                <span className={cn("text-sm", !previewAsExisting ? "text-stone-800 font-medium" : "text-stone-600")}>
+                <span className={cn("text-sm", !previewAsExisting ? "text-gray-900 font-medium" : "text-gray-600")}>
                   New User
                 </span>
                 <Switch
                   checked={previewAsExisting}
                   onCheckedChange={setPreviewAsExisting}
-                  className="data-[state=checked]:bg-orange-500"
+                  className="data-[state=checked]:bg-blue-500"
                 />
-                <span className={cn("text-sm", previewAsExisting ? "text-stone-800 font-medium" : "text-stone-600")}>
+                <span className={cn("text-sm", previewAsExisting ? "text-gray-900 font-medium" : "text-gray-600")}>
                   Existing User
                 </span>
               </div>
             </div>
 
             {/* Form Preview */}
-            <div className="border-2 border-dashed border-stone-200 rounded-2xl p-6 bg-stone-50/30 transition-all duration-300">
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="border-2 border-dashed border-blue-200 rounded-lg p-6 bg-blue-50/30 transition-all duration-300">
+              <div className="bg-white rounded-lg p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-medium text-stone-800">
+                  <h2 className="section-title">
                     {programData.programName} Registration
                   </h2>
-                  <span className="text-sm text-orange-700 bg-orange-100 px-3 py-1 rounded-full">
+                  <span className="text-sm text-blue-700 bg-blue-100 px-3 py-1 rounded-full font-medium">
                     {programData.layoutStyle.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Layout
                   </span>
                 </div>
@@ -435,20 +435,23 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
             {/* Action Section */}
             <div className="mt-8 text-center">
-              <h3 className="text-lg font-medium text-stone-800 mb-4">
+              <h3 className="section-title mb-6">
                 Is this form ready to go, or do you want to make changes?
               </h3>
-              <div className="flex items-center justify-center space-x-4">
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
                 <Button
                   onClick={onProceed}
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white shadow-lg px-8"
+                  className="primary-button"
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                  }}
                 >
                   ✅ Use This Form As-Is
                 </Button>
                 <Button
                   onClick={onEditForm}
                   variant="outline"
-                  className="rounded-2xl border-orange-200 text-orange-700 hover:bg-orange-50 px-8"
+                  className="px-8 py-3 text-base font-medium rounded-full border-blue-400 text-blue-600 hover:bg-blue-50 transition-all duration-300"
                 >
                   ✏️ Edit Form Fields
                 </Button>
@@ -459,12 +462,12 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       </div>
 
       {/* Footer Navigation */}
-      <div className="bg-gradient-to-r from-stone-50 to-orange-50/50 px-8 py-6 border-t border-stone-200/50 sticky bottom-0">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+      <div className="bg-gray-50 px-4 sm:px-6 lg:px-8 py-6 border-t sticky bottom-0">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Button
             onClick={onBack}
             variant="outline"
-            className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
+            className="px-6 py-2 text-sm font-medium rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-300"
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
             Back

@@ -8,7 +8,6 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 
 interface ProgramData {
@@ -51,21 +50,21 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
     const fieldPlaceholder = prefilled && isExistingUser ? "John Doe" : placeholder || `Enter ${label.toLowerCase()}`;
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-3">
         <Label className={cn(
-          "text-stone-800 flex items-center gap-1",
-          prefilled && isExistingUser && "text-stone-600"
+          "label-text text-gray-900 flex items-center gap-1",
+          prefilled && isExistingUser && "text-gray-600"
         )}>
           {label}
           {mandatory && <span className="text-red-500">*</span>}
-          {prefilled && isExistingUser && <Info className="w-3 h-3 text-stone-500" />}
+          {prefilled && isExistingUser && <Info className="w-3 h-3 text-blue-500" />}
         </Label>
         
         {type === 'text' && (
           <Input 
             className={cn(
-              "rounded-2xl border-stone-200",
-              prefilled && isExistingUser && "bg-stone-50 text-stone-600"
+              "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              prefilled && isExistingUser && "bg-gray-50 text-gray-600"
             )}
             placeholder={fieldPlaceholder}
             value={fieldValue}
@@ -76,8 +75,8 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
         {type === 'textarea' && (
           <Textarea 
             className={cn(
-              "rounded-2xl border-stone-200",
-              prefilled && isExistingUser && "bg-stone-50 text-stone-600"
+              "flex w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              prefilled && isExistingUser && "bg-gray-50 text-gray-600"
             )}
             placeholder={fieldPlaceholder}
             value={fieldValue}
@@ -87,7 +86,7 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
         
         {type === 'select' && (
           <Select disabled>
-            <SelectTrigger className="rounded-2xl border-stone-200">
+            <SelectTrigger className="rounded-md border border-input">
               <SelectValue placeholder={fieldPlaceholder} />
             </SelectTrigger>
             <SelectContent>
@@ -118,11 +117,11 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
 
   const renderSingleColumnLayout = () => (
     <div className="space-y-6">
-      <Card className="border-stone-200/50">
-        <CardHeader>
-          <CardTitle className="text-lg text-stone-800">Personal Information</CardTitle>
+      <Card className="border-0 shadow-lg bg-white">
+        <CardHeader className="p-6">
+          <CardTitle className="section-title">Personal Information</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6 p-6">
           {personalInfoFields.map((field, index) => 
             renderFormField(field.label, field.type, field.mandatory, field.prefilled)
           )}
@@ -130,16 +129,16 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </Card>
       
       {programData.paymentRequired && (
-        <Card className="border-stone-200/50">
-          <CardHeader>
-            <CardTitle className="text-lg text-stone-800">Payment Information</CardTitle>
+        <Card className="border-0 shadow-lg bg-white">
+          <CardHeader className="p-6">
+            <CardTitle className="section-title">Payment Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6 p-6">
             {paymentFields.map((field, index) => (
-              <div key={index} className="space-y-2">
-                <Label className="text-stone-800">{field.label} *</Label>
+              <div key={index} className="space-y-3">
+                <Label className="label-text text-gray-900">{field.label} *</Label>
                 <Input 
-                  className="rounded-2xl border-stone-200" 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
                   value={`₹ ${field.value}`}
                   readOnly
                 />
@@ -150,16 +149,16 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       )}
       
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
-        <Card className="border-stone-200/50">
-          <CardHeader>
-            <CardTitle className="text-lg text-stone-800">Travel Information</CardTitle>
+        <Card className="border-0 shadow-lg bg-white">
+          <CardHeader className="p-6">
+            <CardTitle className="section-title">Travel Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6 p-6">
             {travelFields.map((field, index) => (
-              <div key={index} className="space-y-2">
-                <Label className="text-stone-800">{field.label}</Label>
+              <div key={index} className="space-y-3">
+                <Label className="label-text text-gray-900">{field.label}</Label>
                 <Textarea 
-                  className="rounded-2xl border-stone-200" 
+                  className="flex w-full rounded-md border border-input bg-background px-3 py-2" 
                   value={field.value}
                   readOnly
                 />
@@ -173,12 +172,12 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
 
   const renderTwoColumnLayout = () => (
     <div className="space-y-6">
-      <Card className="border-stone-200/50">
-        <CardHeader>
-          <CardTitle className="text-lg text-stone-800">Personal Information</CardTitle>
+      <Card className="border-0 shadow-lg bg-white">
+        <CardHeader className="p-6">
+          <CardTitle className="section-title">Personal Information</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-4">
+        <CardContent className="p-6">
+          <div className="grid gap-4 md:grid-cols-2">
             {personalInfoFields.map((field, index) => 
               renderFormField(field.label, field.type, field.mandatory, field.prefilled)
             )}
@@ -187,17 +186,17 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </Card>
       
       {programData.paymentRequired && (
-        <Card className="border-stone-200/50">
-          <CardHeader>
-            <CardTitle className="text-lg text-stone-800">Payment Information</CardTitle>
+        <Card className="border-0 shadow-lg bg-white">
+          <CardHeader className="p-6">
+            <CardTitle className="section-title">Payment Information</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
+          <CardContent className="p-6">
+            <div className="grid gap-4 md:grid-cols-2">
               {paymentFields.map((field, index) => (
-                <div key={index} className="space-y-2">
-                  <Label className="text-stone-800">{field.label} *</Label>
+                <div key={index} className="space-y-3">
+                  <Label className="label-text text-gray-900">{field.label} *</Label>
                   <Input 
-                    className="rounded-2xl border-stone-200" 
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
                     value={`₹ ${field.value}`}
                     readOnly
                   />
@@ -209,17 +208,17 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       )}
       
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
-        <Card className="border-stone-200/50">
-          <CardHeader>
-            <CardTitle className="text-lg text-stone-800">Travel Information</CardTitle>
+        <Card className="border-0 shadow-lg bg-white">
+          <CardHeader className="p-6">
+            <CardTitle className="section-title">Travel Information</CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-4">
+          <CardContent className="p-6">
+            <div className="grid gap-4 md:grid-cols-2">
               {travelFields.map((field, index) => (
-                <div key={index} className="space-y-2">
-                  <Label className="text-stone-800">{field.label}</Label>
+                <div key={index} className="space-y-3">
+                  <Label className="label-text text-gray-900">{field.label}</Label>
                   <Textarea 
-                    className="rounded-2xl border-stone-200" 
+                    className="flex w-full rounded-md border border-input bg-background px-3 py-2" 
                     value={field.value}
                     readOnly
                   />
@@ -234,70 +233,70 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
 
   const renderQuestionByQuestionLayout = () => (
     <div className="space-y-6">
-      <Card className="border-stone-200/50">
-        <CardHeader>
-          <CardTitle className="text-lg text-stone-800">Question 1 of 7</CardTitle>
+      <Card className="border-0 shadow-lg bg-white">
+        <CardHeader className="p-6">
+          <CardTitle className="section-title">Question 1 of 7</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6 p-6">
           {renderFormField('Name', 'text', true, true)}
           <div className="flex justify-end pt-4">
-            <Button disabled className="bg-orange-400 text-white rounded-2xl">
+            <Button disabled className="primary-button">
               Next Question
             </Button>
           </div>
         </CardContent>
       </Card>
-      <p className="text-sm text-stone-600 text-center italic">
+      <p className="description-text text-center italic">
         Preview shows first question only. Actual form will show one question at a time.
       </p>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 fade-in">
       {/* Header */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl font-light text-stone-800">Preview Registration Form</h1>
-          <p className="text-stone-600 mt-1">
+      <div className="bg-white shadow-sm border-b px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="main-title">Preview Registration Form</h1>
+          <p className="description-text mt-2">
             Based on your selections, we've generated the form your participants will fill out. You can proceed or customize it.
           </p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-stone-200/30 overflow-hidden">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-white border-0 shadow-xl rounded-lg overflow-hidden">
           <div className="p-8">
             {/* User Type Toggle */}
-            <div className="flex items-center justify-between mb-8 p-4 bg-orange-50/50 rounded-2xl border border-orange-200/50">
+            <div className="flex items-center justify-between mb-8 p-6 bg-gray-50 rounded-lg">
               <div>
-                <Label className="text-stone-800 font-medium">Preview Mode</Label>
-                <p className="text-sm text-stone-600">Toggle to see how the form appears for different user types</p>
+                <Label className="label-text text-gray-900 font-medium">Preview Mode</Label>
+                <p className="description-text mt-1">Toggle to see how the form appears for different user types</p>
               </div>
               <div className="flex items-center space-x-3">
-                <span className={cn("text-sm", !isExistingUser ? "text-stone-800 font-medium" : "text-stone-600")}>
+                <span className={cn("text-sm", !isExistingUser ? "text-gray-900 font-medium" : "text-gray-600")}>
                   New User
                 </span>
                 <Switch
                   checked={isExistingUser}
                   onCheckedChange={(checked) => setUserType(checked ? 'existing' : 'new')}
-                  className="data-[state=checked]:bg-orange-500"
+                  className="data-[state=checked]:bg-blue-500"
                 />
-                <span className={cn("text-sm", isExistingUser ? "text-stone-800 font-medium" : "text-stone-600")}>
+                <span className={cn("text-sm", isExistingUser ? "text-gray-900 font-medium" : "text-gray-600")}>
                   Existing User
                 </span>
               </div>
             </div>
 
             {/* Layout Selector */}
-            <div className="flex items-center justify-between mb-8 p-4 bg-stone-50/50 rounded-2xl border border-stone-200/50">
+            <div className="flex items-center justify-between mb-8 p-6 bg-gray-50 rounded-lg">
               <div>
-                <Label className="text-stone-800 font-medium">Layout Style</Label>
-                <p className="text-sm text-stone-600">Choose how form fields are arranged</p>
+                <Label className="label-text text-gray-900 font-medium">Layout Style</Label>
+                <p className="description-text mt-1">Choose how form fields are arranged</p>
               </div>
               <Select value={layoutStyle} onValueChange={(value: any) => setLayoutStyle(value)}>
-                <SelectTrigger className="w-64 rounded-2xl border-stone-200">
+                <SelectTrigger className="w-64 rounded-md border border-input">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -309,13 +308,13 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
             </div>
 
             {/* Form Preview */}
-            <div className="border-2 border-dashed border-stone-200 rounded-2xl p-6 bg-stone-50/30">
-              <div className="bg-white rounded-2xl p-6 shadow-sm">
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 bg-gray-50">
+              <div className="bg-white rounded-lg p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-medium text-stone-800">
+                  <h2 className="section-title">
                     {programData.programName} Registration
                   </h2>
-                  <span className="text-sm text-orange-700 bg-orange-100 px-3 py-1 rounded-full">
+                  <span className="text-sm text-blue-700 bg-blue-100 px-3 py-1 rounded-full font-medium">
                     {layoutStyle.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())} Layout
                   </span>
                 </div>
@@ -328,20 +327,23 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
 
             {/* Action Section */}
             <div className="mt-8 text-center">
-              <h3 className="text-lg font-medium text-stone-800 mb-4">
+              <h3 className="section-title mb-6">
                 Is this form ready to go, or do you want to make changes?
               </h3>
-              <div className="flex items-center justify-center space-x-4">
+              <div className="flex flex-col sm:flex-row gap-4 items-center justify-center">
                 <Button
                   onClick={onConfigureFields}
-                  className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white shadow-lg px-8"
+                  className="primary-button"
+                  style={{
+                    backgroundImage: 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                  }}
                 >
                   ✅ Use This Form As-Is
                 </Button>
                 <Button
                   onClick={onConfigureFields}
                   variant="outline"
-                  className="rounded-2xl border-orange-200 text-orange-700 hover:bg-orange-50 px-8"
+                  className="px-8 py-3 text-base font-medium rounded-full border-blue-400 text-blue-600 hover:bg-blue-50 transition-all duration-300"
                 >
                   ✏️ Edit Form Fields
                 </Button>
@@ -352,12 +354,12 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </div>
 
       {/* Footer Navigation */}
-      <div className="bg-gradient-to-r from-stone-50 to-orange-50/50 px-8 py-6 border-t border-stone-200/50 sticky bottom-0">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
+      <div className="bg-gray-50 px-4 sm:px-6 lg:px-8 py-6 border-t sticky bottom-0">
+        <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Button
             onClick={onBack}
             variant="outline"
-            className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
+            className="px-6 py-2 text-sm font-medium rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-300"
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
             Back
@@ -365,7 +367,7 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
           <Button
             onClick={onSaveDraft}
             variant="ghost"
-            className="text-stone-600 hover:text-stone-800 hover:bg-stone-50 rounded-2xl"
+            className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 px-6 py-2 text-sm font-medium rounded-full transition-all duration-300"
           >
             Save as Draft
           </Button>
