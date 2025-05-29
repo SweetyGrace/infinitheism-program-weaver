@@ -344,9 +344,9 @@ const ProgramCreation = () => {
                     
                     {/* Banner Section */}
                     {programData.programType && (
-                      <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200/50 mb-8">
-                        <p className="text-stone-800 font-medium">
-                          You've selected {programData.programType?.name}
+                      <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-6 border border-orange-200/50 mb-8 text-center">
+                        <p className="text-stone-800 font-medium text-lg">
+                          You're now setting the stage for a {programData.programType?.name} program.
                         </p>
                       </div>
                     )}
