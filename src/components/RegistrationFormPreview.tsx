@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 
 interface ProgramType {
@@ -25,6 +26,8 @@ interface FormField {
   mandatory: boolean;
   helperText: string;
   options?: string[];
+  prefilled?: boolean;
+  section?: 'personal' | 'payment' | 'travel';
 }
 
 interface ProgramData {
@@ -59,8 +62,47 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 }) => {
   const [previewAsExisting, setPreviewAsExisting] = React.useState(programData.userType === 'existing');
 
+  // Enhanced form fields with prefilled and section information
+  const enhancedFormFields: FormField[] = [
+    // Personal Information
+    { id: 'name', type: 'text', label: 'Full Name', mandatory: true, helperText: '', prefilled: true, section: 'personal' },
+    { id: 'email', type: 'text', label: 'Email', mandatory: true, helperText: '', prefilled: true, section: 'personal' },
+    { id: 'phone', type: 'text', label: 'Phone', mandatory: true, helperText: '', prefilled: true, section: 'personal' },
+    { id: 'gender', type: 'dropdown', label: 'Gender', mandatory: false, helperText: '', options: ['Male', 'Female', 'Other'], prefilled: false, section: 'personal' },
+    { id: 'dob', type: 'date', label: 'Date of Birth', mandatory: false, helperText: '', prefilled: false, section: 'personal' },
+    { id: 'city', type: 'text', label: 'City', mandatory: false, helperText: '', prefilled: false, section: 'personal' },
+    { id: 'roommate', type: 'text', label: 'Preferred Roommate Name', mandatory: false, helperText: '', prefilled: false, section: 'personal' },
+    { id: 'note', type: 'paragraph', label: 'Special Notes', mandatory: false, helperText: '', prefilled: false, section: 'personal' },
+    
+    // Travel Information (only for offline/hybrid)
+    ...(programData.mode === 'offline' || programData.mode === 'hybrid' ? [
+      { id: 'idType', type: 'dropdown', label: 'ID Type', mandatory: false, helperText: '', options: ['Passport', 'License', 'Aadhar'], prefilled: false, section: 'travel' },
+      { id: 'idNumber', type: 'text', label: 'ID Number', mandatory: false, helperText: '', prefilled: false, section: 'travel' },
+      { id: 'tshirtSize', type: 'dropdown', label: 'T-shirt Size', mandatory: false, helperText: '', options: ['XS', 'S', 'M', 'L', 'XL'], prefilled: false, section: 'travel' },
+      { id: 'flightDetails', type: 'text', label: 'Flight Details', mandatory: false, helperText: '', prefilled: false, section: 'travel' }
+    ] as FormField[] : [])
+  ];
+
+  // Filter fields based on user type
+  const getVisibleFields = () => {
+    if (previewAsExisting) {
+      // Show only non-prefilled fields for existing users
+      return enhancedFormFields.filter(field => !field.prefilled);
+    }
+    return enhancedFormFields;
+  };
+
+  const visibleFields = getVisibleFields();
+  
+  // Group fields by section
+  const groupedFields = {
+    personal: visibleFields.filter(f => f.section === 'personal'),
+    payment: [], // Payment fields are handled separately
+    travel: visibleFields.filter(f => f.section === 'travel')
+  };
+
   const renderFormField = (field: FormField, index: number) => {
-    const isPrefilledForExisting = previewAsExisting && ['Name', 'Email', 'Phone'].includes(field.label);
+    const isPrefilledForExisting = previewAsExisting && field.prefilled;
     
     return (
       <div key={field.id} className="space-y-2">
@@ -130,15 +172,29 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
   const renderSingleColumnLayout = () => (
     <div className="space-y-6">
-      <Card className="border-stone-200/50">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-medium text-stone-800 mb-4">Personal Information</h3>
-          <div className="space-y-4">
-            {programData.formFields.map((field, index) => renderFormField(field, index))}
-          </div>
-        </CardContent>
-      </Card>
+      {/* Existing User Info Banner */}
+      {previewAsExisting && (
+        <Alert className="border-blue-200 bg-blue-50/50">
+          <Info className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            We've prefilled some information for returning seekers. Only the remaining fields are shown below.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {/* Personal Information Section */}
+      {groupedFields.personal.length > 0 && (
+        <Card className="border-stone-200/50">
+          <CardContent className="p-6">
+            <h3 className="text-lg font-medium text-stone-800 mb-4">Personal Information</h3>
+            <div className="space-y-4">
+              {groupedFields.personal.map((field, index) => renderFormField(field, index))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
+      {/* Payment Information */}
       {programData.paymentRequired && (
         <Card className="border-stone-200/50">
           <CardContent className="p-6">
@@ -165,19 +221,26 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         </Card>
       )}
       
-      {programData.mode === 'offline' && (
+      {/* Travel Information */}
+      {(programData.mode === 'offline' || programData.mode === 'hybrid') && groupedFields.travel.length > 0 && (
         <Card className="border-stone-200/50">
           <CardContent className="p-6">
             <h3 className="text-lg font-medium text-stone-800 mb-4">Travel Information</h3>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-stone-800">Venue Address</Label>
-                <Textarea 
-                  className="rounded-2xl border-stone-200" 
-                  value={programData.venueAddress}
-                  readOnly
-                />
-              </div>
+              {groupedFields.travel.map((field, index) => renderFormField(field, index))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Show message if no fields are visible for existing user */}
+      {previewAsExisting && visibleFields.length === 0 && !programData.paymentRequired && (
+        <Card className="border-stone-200/50">
+          <CardContent className="p-6 text-center">
+            <div className="text-stone-600">
+              <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
+              <p className="text-lg font-medium text-stone-800 mb-2">All Set!</p>
+              <p>All required information is already available for returning seekers.</p>
             </div>
           </CardContent>
         </Card>
@@ -186,84 +249,134 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
   );
 
   const renderTwoColumnLayout = () => (
-    <div className="grid grid-cols-2 gap-6">
-      <Card className="border-stone-200/50">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-medium text-stone-800 mb-4">Personal Information</h3>
-          <div className="space-y-4">
-            {programData.formFields.map((field, index) => renderFormField(field, index))}
-          </div>
-        </CardContent>
-      </Card>
-      
-      <div className="space-y-6">
-        {programData.paymentRequired && (
+    <div className="space-y-6">
+      {/* Existing User Info Banner */}
+      {previewAsExisting && (
+        <Alert className="border-blue-200 bg-blue-50/50">
+          <Info className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            We've prefilled some information for returning seekers. Only the remaining fields are shown below.
+          </AlertDescription>
+        </Alert>
+      )}
+
+      <div className="grid grid-cols-2 gap-6">
+        {/* Personal Information */}
+        {groupedFields.personal.length > 0 && (
           <Card className="border-stone-200/50">
             <CardContent className="p-6">
-              <h3 className="text-lg font-medium text-stone-800 mb-4">Payment Information</h3>
+              <h3 className="text-lg font-medium text-stone-800 mb-4">Personal Information</h3>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-stone-800">HDB Fee *</Label>
-                  <Input 
-                    className="rounded-2xl border-stone-200" 
-                    value={`₹ ${programData.hdbFee}`}
-                    readOnly
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-stone-800">MSD Fee *</Label>
-                  <Input 
-                    className="rounded-2xl border-stone-200" 
-                    value={`₹ ${programData.msdFee}`}
-                    readOnly
-                  />
-                </div>
+                {groupedFields.personal.map((field, index) => renderFormField(field, index))}
               </div>
             </CardContent>
           </Card>
         )}
         
-        {programData.mode === 'offline' && (
+        <div className="space-y-6">
+          {/* Payment Information */}
+          {programData.paymentRequired && (
+            <Card className="border-stone-200/50">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-medium text-stone-800 mb-4">Payment Information</h3>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-stone-800">HDB Fee *</Label>
+                    <Input 
+                      className="rounded-2xl border-stone-200" 
+                      value={`₹ ${programData.hdbFee}`}
+                      readOnly
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-stone-800">MSD Fee *</Label>
+                    <Input 
+                      className="rounded-2xl border-stone-200" 
+                      value={`₹ ${programData.msdFee}`}
+                      readOnly
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
+          {/* Travel Information */}
+          {(programData.mode === 'offline' || programData.mode === 'hybrid') && groupedFields.travel.length > 0 && (
+            <Card className="border-stone-200/50">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-medium text-stone-800 mb-4">Travel Information</h3>
+                <div className="space-y-4">
+                  {groupedFields.travel.map((field, index) => renderFormField(field, index))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+
+      {/* Show message if no fields are visible for existing user */}
+      {previewAsExisting && visibleFields.length === 0 && !programData.paymentRequired && (
+        <Card className="border-stone-200/50 col-span-2">
+          <CardContent className="p-6 text-center">
+            <div className="text-stone-600">
+              <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
+              <p className="text-lg font-medium text-stone-800 mb-2">All Set!</p>
+              <p>All required information is already available for returning seekers.</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+
+  const renderQuestionByQuestionLayout = () => {
+    const currentField = visibleFields.length > 0 ? visibleFields[0] : null;
+    
+    return (
+      <div className="space-y-6">
+        {/* Existing User Info Banner */}
+        {previewAsExisting && (
+          <Alert className="border-blue-200 bg-blue-50/50">
+            <Info className="h-4 w-4 text-blue-600" />
+            <AlertDescription className="text-blue-800">
+              We've prefilled some information for returning seekers. Only the remaining fields are shown below.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {currentField ? (
           <Card className="border-stone-200/50">
             <CardContent className="p-6">
-              <h3 className="text-lg font-medium text-stone-800 mb-4">Travel Information</h3>
+              <h3 className="text-lg font-medium text-stone-800 mb-4">Question 1 of {visibleFields.length}</h3>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-stone-800">Venue Address</Label>
-                  <Textarea 
-                    className="rounded-2xl border-stone-200" 
-                    value={programData.venueAddress}
-                    readOnly
-                  />
+                {renderFormField(currentField, 0)}
+                <div className="flex justify-end pt-4">
+                  <Button disabled className="bg-orange-400 text-white rounded-2xl">
+                    Next Question
+                  </Button>
                 </div>
               </div>
             </CardContent>
           </Card>
+        ) : (
+          <Card className="border-stone-200/50">
+            <CardContent className="p-6 text-center">
+              <div className="text-stone-600">
+                <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
+                <p className="text-lg font-medium text-stone-800 mb-2">All Set!</p>
+                <p>All required information is already available for returning seekers.</p>
+              </div>
+            </CardContent>
+          </Card>
         )}
+        
+        <p className="text-sm text-stone-600 text-center italic">
+          Preview shows first question only. Actual form will show one question at a time.
+        </p>
       </div>
-    </div>
-  );
-
-  const renderQuestionByQuestionLayout = () => (
-    <div className="space-y-6">
-      <Card className="border-stone-200/50">
-        <CardContent className="p-6">
-          <h3 className="text-lg font-medium text-stone-800 mb-4">Question 1 of {programData.formFields.length}</h3>
-          <div className="space-y-4">
-            {programData.formFields.length > 0 && renderFormField(programData.formFields[0], 0)}
-            <div className="flex justify-end pt-4">
-              <Button disabled className="bg-orange-400 text-white rounded-2xl">
-                Next Question
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-      <p className="text-sm text-stone-600 text-center italic">
-        Preview shows first question only. Actual form will show one question at a time.
-      </p>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
@@ -303,7 +416,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
             </div>
 
             {/* Form Preview */}
-            <div className="border-2 border-dashed border-stone-200 rounded-2xl p-6 bg-stone-50/30">
+            <div className="border-2 border-dashed border-stone-200 rounded-2xl p-6 bg-stone-50/30 transition-all duration-300">
               <div className="bg-white rounded-2xl p-6 shadow-sm">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-medium text-stone-800">
