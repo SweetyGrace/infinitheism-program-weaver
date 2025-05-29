@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart, Book, Lightbulb, Palette } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -25,7 +25,7 @@ interface ProgramData {
   programType: ProgramType | null;
   programName: string;
   selectedSessions: string[];
-  mode: 'online' | 'offline';
+  mode: 'online' | 'offline' | 'hybrid';
   paymentRequired: boolean;
   sessionSchedules: Record<string, { startDate: string; endDate: string }>;
   venueAddress: string;
@@ -49,44 +49,20 @@ interface FormField {
 
 const programTypes: ProgramType[] = [
   {
-    id: 'hdb',
-    name: 'HDB',
-    description: 'Holistic Development Blueprint - Comprehensive personal growth programs',
+    id: 'hdb-msd',
+    name: 'HDB / MSD',
+    description: '',
     icon: Sparkles,
-    defaultSessions: ['HDB1', 'HDB2'],
+    defaultSessions: ['HDB 1', 'HDB 2', 'HDB 3', 'MSD 1', 'MSD 2'],
     defaultDuration: 7
   },
   {
     id: 'entrainment',
     name: 'Entrainment',
-    description: 'Resonance-based guidance sessions for spiritual alignment',
+    description: '',
     icon: Heart,
     defaultSessions: ['ENT1', 'ENT2'],
     defaultDuration: 3
-  },
-  {
-    id: 'infinitisium',
-    name: 'Infinitisium',
-    description: 'Daily wisdom reflections and mindful practices',
-    icon: Book,
-    defaultSessions: ['INF1'],
-    defaultDuration: 21
-  },
-  {
-    id: 'revelation',
-    name: 'Revelation',
-    description: 'Long-form deep-dive explorations of consciousness',
-    icon: Lightbulb,
-    defaultSessions: ['REV1', 'REV2', 'REV3'],
-    defaultDuration: 14
-  },
-  {
-    id: 'custom',
-    name: 'Custom',
-    description: 'Freeform format - design your own unique program structure',
-    icon: Palette,
-    defaultSessions: [],
-    defaultDuration: 7
   }
 ];
 
@@ -126,7 +102,6 @@ const ProgramCreation = () => {
       programType: type,
       selectedSessions: type.defaultSessions
     });
-    setCurrentStep(1);
   };
 
   const addFormField = (type: FormField['type']) => {
@@ -163,7 +138,7 @@ const ProgramCreation = () => {
   const getStepTitle = () => {
     if (showFormPreview) return 'Preview Registration Form';
     switch (currentStep) {
-      case 0: return 'Select the Type of Program to Create';
+      case 0: return 'Program Creation';
       case 1: return 'Program Basics';
       case 2: return 'Schedule & Logistics';
       case 3: return 'Registration Layout & Settings';
@@ -192,49 +167,53 @@ const ProgramCreation = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
       {/* Header with Progress */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-4 shadow-sm">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-2xl font-light text-stone-800 mb-4">{getStepTitle()}</h1>
-          {currentStep > 0 && (
-            <>
-              <div className="flex items-center space-x-4">
-                {[1, 2, 3, 4].map((step) => (
-                  <div key={step} className="flex items-center">
-                    <div className={cn(
-                      "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300",
-                      currentStep >= step 
-                        ? "bg-gradient-to-r from-orange-300 to-amber-400 text-white shadow-lg" 
-                        : "bg-stone-100 text-stone-500"
-                    )}>
-                      {step}
-                    </div>
-                    {step < 4 && (
-                      <div className={cn(
-                        "w-12 h-0.5 mx-2 transition-all duration-300",
-                        currentStep > step ? "bg-gradient-to-r from-orange-300 to-amber-400" : "bg-stone-200"
-                      )} />
-                    )}
-                  </div>
-                ))}
-              </div>
-              <div className="flex space-x-8 mt-2">
-                <span className={cn("text-sm", currentStep === 1 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                  Program Basics
-                </span>
-                <span className={cn("text-sm", currentStep === 2 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                  Schedule & Logistics
-                </span>
-                <span className={cn("text-sm", currentStep === 3 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                  Layout & Settings
-                </span>
-                <span className={cn("text-sm", currentStep === 4 ? "text-stone-800 font-medium" : "text-stone-600")}>
-                  Form Builder
-                </span>
-              </div>
-            </>
-          )}
+      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '50px' }}>
+        <div className="max-w-5xl mx-auto flex items-center" style={{ paddingLeft: '10px' }}>
+          <h1 className="text-2xl font-light text-stone-800">{getStepTitle()}</h1>
         </div>
       </div>
+
+      {/* Progress Steps */}
+      {currentStep > 0 && (
+        <div className="bg-white/80 backdrop-blur-sm border-b border-stone-200/30 px-6 py-4">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center space-x-4">
+              {[1, 2, 3, 4].map((step) => (
+                <div key={step} className="flex items-center">
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300",
+                    currentStep >= step 
+                      ? "bg-gradient-to-r from-orange-300 to-amber-400 text-white shadow-lg" 
+                      : "bg-stone-100 text-stone-500"
+                  )}>
+                    {step}
+                  </div>
+                  {step < 4 && (
+                    <div className={cn(
+                      "w-12 h-0.5 mx-2 transition-all duration-300",
+                      currentStep > step ? "bg-gradient-to-r from-orange-300 to-amber-400" : "bg-stone-200"
+                    )} />
+                  )}
+                </div>
+              ))}
+            </div>
+            <div className="flex space-x-8 mt-2">
+              <span className={cn("text-sm", currentStep === 1 ? "text-stone-800 font-medium" : "text-stone-600")}>
+                Program Basics
+              </span>
+              <span className={cn("text-sm", currentStep === 2 ? "text-stone-800 font-medium" : "text-stone-600")}>
+                Schedule & Logistics
+              </span>
+              <span className={cn("text-sm", currentStep === 3 ? "text-stone-800 font-medium" : "text-stone-600")}>
+                Layout & Settings
+              </span>
+              <span className={cn("text-sm", currentStep === 4 ? "text-stone-800 font-medium" : "text-stone-600")}>
+                Form Builder
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-6 py-8">
@@ -243,41 +222,57 @@ const ProgramCreation = () => {
             {/* Step 0: Program Type Selection */}
             {currentStep === 0 && (
               <div className="space-y-8 animate-fade-in">
-                <div className="text-center mb-8">
-                  <p className="text-stone-600 text-lg">Choose the foundation for your spiritual program</p>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
                   {programTypes.map((type) => {
                     const IconComponent = type.icon;
+                    const isSelected = programData.programType?.id === type.id;
                     return (
                       <Card 
                         key={type.id} 
-                        className="cursor-pointer border-stone-200/50 hover:border-orange-300 transition-all duration-300 hover:shadow-lg group bg-gradient-to-br from-white to-stone-50/50"
+                        className={cn(
+                          "cursor-pointer border-stone-200/50 hover:border-orange-300 transition-all duration-300 hover:shadow-lg group bg-gradient-to-br from-white to-stone-50/50",
+                          isSelected && "border-orange-300 bg-orange-50/50 shadow-lg"
+                        )}
                         onClick={() => selectProgramType(type)}
                       >
                         <CardContent className="p-6 text-center">
-                          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                          <div className={cn(
+                            "w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-orange-100 to-amber-100 rounded-full flex items-center justify-center transition-transform duration-300",
+                            isSelected ? "scale-110" : "group-hover:scale-110"
+                          )}>
                             <IconComponent className="w-8 h-8 text-orange-600" />
                           </div>
-                          <h3 className="text-lg font-medium text-stone-800 mb-2">{type.name}</h3>
-                          <p className="text-sm text-stone-600 leading-relaxed">{type.description}</p>
-                          <div className="mt-4 px-3 py-1 bg-orange-50 rounded-full inline-block">
-                            <span className="text-xs text-orange-700">
-                              {type.defaultSessions.length > 0 ? `${type.defaultSessions.length} sessions` : 'Flexible'}
-                            </span>
-                          </div>
+                          <h3 className="text-lg font-medium text-stone-800">{type.name}</h3>
                         </CardContent>
                       </Card>
                     );
                   })}
                 </div>
+                
+                {programData.programType && (
+                  <div className="flex justify-center mt-8">
+                    <Button
+                      onClick={() => setCurrentStep(1)}
+                      className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg px-8"
+                    >
+                      Next
+                      <ChevronRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+                )}
               </div>
             )}
 
             {/* Step 1: Program Basics */}
             {currentStep === 1 && (
               <div className="space-y-8 animate-fade-in">
+                {/* Banner Section */}
+                <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200/50">
+                  <p className="text-stone-800 font-medium">
+                    You've selected {programData.programType?.name}
+                  </p>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="programName" className="text-stone-800 font-medium">Program Name *</Label>
                   <Input
@@ -289,26 +284,8 @@ const ProgramCreation = () => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-stone-800 font-medium flex items-center gap-2">
-                    Program Type
-                    <Info className="w-4 h-4 text-stone-500" />
-                  </Label>
-                  <div className="bg-gradient-to-r from-orange-50 to-amber-50 rounded-2xl p-4 border border-orange-200/50">
-                    <div className="flex items-center gap-3">
-                      {programData.programType && (
-                        <>
-                          <programData.programType.icon className="w-5 h-5 text-orange-600" />
-                          <span className="text-stone-800 font-medium">{programData.programType.name}</span>
-                        </>
-                      )}
-                    </div>
-                    <p className="text-sm text-stone-600 mt-1">{programData.programType?.description}</p>
-                  </div>
-                </div>
-
                 <div className="space-y-4">
-                  <Label className="text-stone-800 font-medium">Session Selection</Label>
+                  <Label className="text-stone-800 font-medium">Sessions</Label>
                   <div className="grid grid-cols-2 gap-4">
                     {programData.programType?.defaultSessions.map((session) => (
                       <div key={session} className="flex items-center space-x-3 bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
@@ -338,7 +315,7 @@ const ProgramCreation = () => {
                   <Label className="text-stone-800 font-medium">Mode of Program</Label>
                   <RadioGroup
                     value={programData.mode}
-                    onValueChange={(value: 'online' | 'offline') => updateProgramData({ mode: value })}
+                    onValueChange={(value: 'online' | 'offline' | 'hybrid') => updateProgramData({ mode: value })}
                     className="flex space-x-8"
                   >
                     <div className="flex items-center space-x-2">
@@ -349,20 +326,11 @@ const ProgramCreation = () => {
                       <RadioGroupItem value="offline" id="offline" className="border-orange-300 text-orange-600" />
                       <Label htmlFor="offline" className="text-stone-800">Offline</Label>
                     </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="hybrid" id="hybrid" className="border-orange-300 text-orange-600" />
+                      <Label htmlFor="hybrid" className="text-stone-800">Hybrid</Label>
+                    </div>
                   </RadioGroup>
-                </div>
-
-                <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                  <div>
-                    <Label htmlFor="payment" className="text-stone-800 font-medium">Is Payment Required?</Label>
-                    <p className="text-sm text-stone-600">Enable if participants need to pay</p>
-                  </div>
-                  <Switch
-                    id="payment"
-                    checked={programData.paymentRequired}
-                    onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
-                    className="data-[state=checked]:bg-orange-500"
-                  />
                 </div>
               </div>
             )}
@@ -370,6 +338,7 @@ const ProgramCreation = () => {
             {/* Step 2: Schedule & Logistics */}
             {currentStep === 2 && (
               <div className="space-y-8 animate-fade-in">
+                
                 <div className="space-y-6">
                   <h3 className="text-lg font-medium text-stone-800">Session Scheduler</h3>
                   {programData.selectedSessions.map((session) => (
@@ -413,7 +382,7 @@ const ProgramCreation = () => {
                   ))}
                 </div>
 
-                {programData.mode === 'offline' && (
+                {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
                   <div className="space-y-6 animate-fade-in">
                     <div className="space-y-2">
                       <Label className="text-stone-800 font-medium">Venue Address</Label>
@@ -439,6 +408,19 @@ const ProgramCreation = () => {
                     </div>
                   </div>
                 )}
+
+                <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                  <div>
+                    <Label htmlFor="payment" className="text-stone-800 font-medium">Is Payment Required?</Label>
+                    <p className="text-sm text-stone-600">Enable if participants need to pay</p>
+                  </div>
+                  <Switch
+                    id="payment"
+                    checked={programData.paymentRequired}
+                    onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
+                    className="data-[state=checked]:bg-orange-500"
+                  />
+                </div>
 
                 {programData.paymentRequired && (
                   <div className="space-y-6 animate-fade-in">
@@ -487,6 +469,7 @@ const ProgramCreation = () => {
             {/* Step 3: Registration Layout & Settings */}
             {currentStep === 3 && (
               <div className="space-y-8 animate-fade-in">
+                
                 <div className="space-y-6">
                   <h3 className="text-lg font-medium text-stone-800">Choose Registration Layout</h3>
                   <div className="grid grid-cols-3 gap-4">
@@ -541,6 +524,7 @@ const ProgramCreation = () => {
             {/* Step 4: Registration Form Builder */}
             {currentStep === 4 && (
               <div className="space-y-8 animate-fade-in">
+                
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-medium text-stone-800">Registration Form Builder</h3>
                   <Button
