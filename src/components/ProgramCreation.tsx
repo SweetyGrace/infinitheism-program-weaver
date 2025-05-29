@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -191,8 +192,8 @@ const ProgramCreation = () => {
   if (currentStep === 0) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
-        {/* Header */}
-        <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '50px' }}>
+        {/* Header - Made Sticky */}
+        <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '50px' }}>
           <div className="max-w-[1200px] mx-auto flex items-center h-full" style={{ paddingLeft: '10px' }}>
             <h1 className="text-2xl font-light text-stone-800">Program Creation</h1>
           </div>
@@ -259,14 +260,14 @@ const ProgramCreation = () => {
   if (currentStep === 1 || currentStep === 2) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
-        {/* Header */}
-        <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
+        {/* Header - Made Sticky */}
+        <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
           <div className="max-w-[1200px] mx-auto flex items-center h-full" style={{ paddingLeft: '10px' }}>
             <h1 className="text-2xl font-light text-stone-800">Program Creation</h1>
           </div>
         </div>
 
-        <div className="flex" style={{ marginTop: '66px', paddingBottom: '80px' }}>
+        <div className="flex" style={{ paddingBottom: '80px' }}>
           {/* Left Vertical Stepper */}
           <div className="w-64 bg-white/80 backdrop-blur-sm border-r border-stone-200/30 fixed left-0 top-16 bottom-20 p-6">
             <div className="space-y-6">
@@ -381,48 +382,6 @@ const ProgramCreation = () => {
                         </div>
                       </RadioGroup>
                     </div>
-
-                    <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
-                      <div>
-                        <Label className="text-stone-800 font-medium">Is Payment Required?</Label>
-                        <p className="text-sm text-stone-600">Enable if fees are required for this program</p>
-                      </div>
-                      <Switch
-                        checked={programData.paymentRequired}
-                        onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
-                        className="data-[state=checked]:bg-orange-500"
-                      />
-                    </div>
-
-                    {programData.paymentRequired && (
-                      <div className="space-y-6 bg-orange-50/30 rounded-2xl p-6 border border-orange-200/50">
-                        <h4 className="text-lg font-medium text-stone-800">Payment Configuration</h4>
-                        <div className="grid grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <Label htmlFor="hdbFee" className="text-stone-800 font-medium">HDB Fee (₹)</Label>
-                            <Input
-                              id="hdbFee"
-                              type="number"
-                              value={programData.hdbFee}
-                              onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
-                              className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
-                              placeholder="Enter HDB fee amount"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="msdFee" className="text-stone-800 font-medium">MSD Fee (₹)</Label>
-                            <Input
-                              id="msdFee"
-                              type="number"
-                              value={programData.msdFee}
-                              onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
-                              className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
-                              placeholder="Enter MSD fee amount"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
                   </div>
                 </div>
               )}
@@ -557,6 +516,51 @@ const ProgramCreation = () => {
                         </div>
                       </div>
                     )}
+
+                    {/* Payment Configuration - Moved from Program Basics */}
+                    <div className="space-y-6">
+                      <div className="flex items-center justify-between bg-stone-50/50 rounded-2xl p-4 border border-stone-200/50">
+                        <div>
+                          <Label className="text-stone-800 font-medium">Is Payment Required?</Label>
+                          <p className="text-sm text-stone-600">Enable if fees are required for this program</p>
+                        </div>
+                        <Switch
+                          checked={programData.paymentRequired}
+                          onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
+                          className="data-[state=checked]:bg-orange-500"
+                        />
+                      </div>
+
+                      {programData.paymentRequired && (
+                        <div className="space-y-6 bg-orange-50/30 rounded-2xl p-6 border border-orange-200/50">
+                          <h4 className="text-lg font-medium text-stone-800">Payment Configuration</h4>
+                          <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                              <Label htmlFor="hdbFee" className="text-stone-800 font-medium">HDB Fee (₹)</Label>
+                              <Input
+                                id="hdbFee"
+                                type="number"
+                                value={programData.hdbFee}
+                                onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
+                                className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                                placeholder="Enter HDB fee amount"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="msdFee" className="text-stone-800 font-medium">MSD Fee (₹)</Label>
+                              <Input
+                                id="msdFee"
+                                type="number"
+                                value={programData.msdFee}
+                                onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
+                                className="rounded-2xl border-stone-200 focus:border-orange-300 focus:ring-orange-300/20 bg-white/80"
+                                placeholder="Enter MSD fee amount"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -610,8 +614,8 @@ const ProgramCreation = () => {
   // Steps 3 and 4 remain unchanged
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
-      {/* Header with Progress */}
-      <div className="bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
+      {/* Header with Progress - Made Sticky */}
+      <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
         <div className="max-w-5xl mx-auto flex items-center" style={{ paddingLeft: '10px' }}>
           <h1 className="text-2xl font-light text-stone-800">
             {currentStep === 3 ? 'Registration Layout & Settings' : 'Registration Form Builder'}
