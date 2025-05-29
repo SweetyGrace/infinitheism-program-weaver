@@ -1,6 +1,7 @@
 
+
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
+import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart, CheckCircle, Edit, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -761,10 +762,10 @@ const ProgramCreation = () => {
                 </Button>
               ) : (
                 <Button
-                  onClick={() => setCurrentStep(3)}
+                  onClick={() => setCurrentStep(2.5)}
                   className="bg-gradient-to-r from-orange-400 to-amber-500 hover:from-orange-500 hover:to-amber-600 rounded-2xl text-white shadow-lg"
                 >
-                  Continue to Layout & Settings
+                  Continue
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
               )}
@@ -775,7 +776,86 @@ const ProgramCreation = () => {
     );
   }
 
-  // Steps 3 and 4 remain unchanged
+  // New Confirmation Screen (Step 2.5)
+  if (currentStep === 2.5) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
+        {/* Header */}
+        <div className="sticky top-0 z-50 bg-white/90 backdrop-blur-sm border-b border-stone-200/50 px-6 py-3 shadow-sm" style={{ height: '66px' }}>
+          <div className="max-w-[1200px] mx-auto flex items-center h-full" style={{ paddingLeft: '10px' }}>
+            <h1 className="text-2xl font-light text-stone-800">Program Creation</h1>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="flex items-center justify-center min-h-[calc(100vh-66px)] px-6 py-8">
+          <div className="max-w-2xl mx-auto text-center space-y-8 animate-fade-in">
+            
+            {/* Visual Element */}
+            <div className="relative">
+              <div className="w-32 h-32 mx-auto bg-gradient-to-br from-green-100 to-emerald-100 rounded-full flex items-center justify-center shadow-lg">
+                <CheckCircle className="w-16 h-16 text-green-600" />
+              </div>
+              <div className="absolute inset-0 w-32 h-32 mx-auto bg-green-200/30 rounded-full animate-pulse" />
+            </div>
+
+            {/* Header */}
+            <div className="space-y-4">
+              <h1 className="text-4xl font-light text-stone-800">
+                Your program has been created successfully!
+              </h1>
+              <p className="text-xl text-stone-600 font-light leading-relaxed">
+                You've laid the foundation. Now let's shape how the seeker will experience the registration journey.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-4 pt-8">
+              <div className="space-y-3">
+                {/* Primary Action */}
+                <Button
+                  onClick={() => setShowFormPreview(true)}
+                  className="w-full h-14 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-2xl text-white text-lg font-medium shadow-lg transition-all duration-300 hover:shadow-xl"
+                >
+                  <Eye className="w-5 h-5 mr-3" />
+                  Preview User Form
+                </Button>
+
+                {/* Secondary Actions */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => setCurrentStep(3)}
+                    variant="outline"
+                    className="h-12 rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50 text-base font-medium transition-all duration-300"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit Program Details
+                  </Button>
+
+                  <Button
+                    onClick={() => setCurrentStep(0)}
+                    variant="outline"
+                    className="h-12 rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50 text-base font-medium transition-all duration-300"
+                  >
+                    <Home className="w-4 h-4 mr-2" />
+                    Home
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Optional Background Visual */}
+            <div className="absolute inset-0 -z-10 overflow-hidden">
+              <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-100/20 rounded-full blur-3xl" />
+              <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-green-100/20 rounded-full blur-3xl" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Steps 4 and 5 (adjusted numbering) - Layout & Settings and Form Builder
   return (
     <div className="min-h-screen bg-gradient-to-br from-stone-50 via-white to-orange-50/30">
       {/* Header with Progress - Made Sticky */}
@@ -928,7 +1008,7 @@ const ProgramCreation = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <Button
-                  onClick={() => setCurrentStep(currentStep === 3 ? 2 : currentStep - 1)}
+                  onClick={() => setCurrentStep(currentStep === 3 ? 2.5 : currentStep - 1)}
                   variant="outline"
                   className="rounded-2xl border-stone-300 text-stone-700 hover:bg-stone-50"
                 >
@@ -967,3 +1047,4 @@ const ProgramCreation = () => {
 };
 
 export default ProgramCreation;
+
