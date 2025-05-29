@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, Save, Eye, Plus, Info, Sparkles, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -87,7 +88,7 @@ const ProgramCreation = () => {
   const [showFormPreview, setShowFormPreview] = useState(false);
   const [programData, setProgramData] = useState<ProgramData>({
     programType: null,
-    programName: '',
+    programName: 'HDB-25',
     selectedSessions: [],
     mode: 'online',
     paymentRequired: true, // Pre-selected as true
