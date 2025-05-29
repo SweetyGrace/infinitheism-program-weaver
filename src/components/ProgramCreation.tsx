@@ -77,7 +77,7 @@ const ProgramCreation = () => {
     mode: 'online',
     paymentRequired: false,
     sessionSchedules: {},
-    venueAddress: '',
+    venueAddress: 'Leonia Holistic Destination, Bommarasipet, Shamirpet Mandal, Medchal-Malkajgiri District, Hyderabad - 500078',
     travelRequired: false,
     hdbFee: 0,
     msdFee: 0,
@@ -388,9 +388,8 @@ const ProgramCreation = () => {
                       <Label className="text-stone-800 font-medium">Venue Address</Label>
                       <Textarea
                         value={programData.venueAddress}
-                        onChange={(e) => updateProgramData({ venueAddress: e.target.value })}
-                        className="rounded-2xl border-stone-200 focus:border-orange-300 bg-white/80"
-                        placeholder="Enter complete venue address"
+                        readOnly
+                        className="rounded-2xl border-stone-200 bg-stone-50 text-stone-700"
                         rows={3}
                       />
                     </div>
