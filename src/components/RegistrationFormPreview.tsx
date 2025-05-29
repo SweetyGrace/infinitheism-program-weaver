@@ -105,9 +105,9 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
     const isPrefilledForExisting = previewAsExisting && field.prefilled;
     
     return (
-      <div key={field.id} className="space-y-3">
+      <div key={field.id} className="form-field-spacing">
         <Label className={cn(
-          "label-text text-gray-900 flex items-center gap-1",
+          "label-text flex items-center gap-1",
           isPrefilledForExisting && "text-gray-600"
         )}>
           {field.label}
@@ -121,7 +121,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         {field.type === 'text' && (
           <Input 
             className={cn(
-              "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "form-input",
               isPrefilledForExisting && "bg-gray-50 text-gray-600"
             )}
             placeholder={isPrefilledForExisting ? "John Doe" : `Enter ${field.label.toLowerCase()}`}
@@ -133,7 +133,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         {field.type === 'date' && (
           <Input 
             type="date" 
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" 
+            className="form-input" 
             readOnly
           />
         )}
@@ -141,14 +141,14 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         {field.type === 'file' && (
           <Input 
             type="file" 
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
+            className="form-input" 
             disabled
           />
         )}
         
         {field.type === 'dropdown' && (
           <Select disabled>
-            <SelectTrigger className="rounded-md border border-input">
+            <SelectTrigger className="form-input">
               <SelectValue placeholder={`Select ${field.label.toLowerCase()}`} />
             </SelectTrigger>
             <SelectContent>
@@ -161,7 +161,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         
         {field.type === 'paragraph' && (
           <Textarea 
-            className="flex w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" 
+            className="form-input" 
             placeholder={`Enter ${field.label.toLowerCase()}`}
             readOnly
           />
@@ -171,7 +171,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
   };
 
   const renderSingleColumnLayout = () => (
-    <div className="space-y-6">
+    <div className="form-section-spacing">
       {/* Existing User Info Banner */}
       {previewAsExisting && (
         <Alert className="border-blue-200 bg-blue-50">
@@ -184,10 +184,10 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
       {/* Personal Information Section */}
       {groupedFields.personal.length > 0 && (
-        <Card className="border-0 shadow-lg card-hover">
+        <Card className="card-main card-hover group">
           <CardContent className="p-6">
             <h3 className="section-title mb-4">Personal Information</h3>
-            <div className="space-y-6">
+            <div className="form-section-spacing">
               {groupedFields.personal.map((field, index) => renderFormField(field, index))}
             </div>
           </CardContent>
@@ -196,22 +196,22 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       
       {/* Payment Information */}
       {programData.paymentRequired && (
-        <Card className="border-0 shadow-lg card-hover">
+        <Card className="card-main card-hover group">
           <CardContent className="p-6">
             <h3 className="section-title mb-4">Payment Information</h3>
-            <div className="space-y-6">
-              <div className="space-y-3">
-                <Label className="label-text text-gray-900">HDB Fee *</Label>
+            <div className="form-section-spacing">
+              <div className="form-field-spacing">
+                <Label className="label-text">HDB Fee *</Label>
                 <Input 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
+                  className="form-input" 
                   value={`₹ ${programData.hdbFee}`}
                   readOnly
                 />
               </div>
-              <div className="space-y-3">
-                <Label className="label-text text-gray-900">MSD Fee *</Label>
+              <div className="form-field-spacing">
+                <Label className="label-text">MSD Fee *</Label>
                 <Input 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
+                  className="form-input" 
                   value={`₹ ${programData.msdFee}`}
                   readOnly
                 />
@@ -223,10 +223,10 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       
       {/* Travel Information */}
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && groupedFields.travel.length > 0 && (
-        <Card className="border-0 shadow-lg card-hover">
+        <Card className="card-main card-hover group">
           <CardContent className="p-6">
             <h3 className="section-title mb-4">Travel Information</h3>
-            <div className="space-y-6">
+            <div className="form-section-spacing">
               {groupedFields.travel.map((field, index) => renderFormField(field, index))}
             </div>
           </CardContent>
@@ -235,7 +235,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
       {/* Show message if no fields are visible for existing user */}
       {previewAsExisting && visibleFields.length === 0 && !programData.paymentRequired && (
-        <Card className="border-0 shadow-lg">
+        <Card className="card-main">
           <CardContent className="p-6 text-center">
             <div className="text-gray-600">
               <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
@@ -249,7 +249,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
   );
 
   const renderTwoColumnLayout = () => (
-    <div className="space-y-6">
+    <div className="form-section-spacing">
       {/* Existing User Info Banner */}
       {previewAsExisting && (
         <Alert className="border-blue-200 bg-blue-50">
@@ -263,10 +263,10 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       <div className="grid gap-6 md:grid-cols-2">
         {/* Personal Information */}
         {groupedFields.personal.length > 0 && (
-          <Card className="border-0 shadow-lg card-hover">
+          <Card className="card-main card-hover group">
             <CardContent className="p-6">
               <h3 className="section-title mb-4">Personal Information</h3>
-              <div className="space-y-6">
+              <div className="form-section-spacing">
                 {groupedFields.personal.map((field, index) => renderFormField(field, index))}
               </div>
             </CardContent>
@@ -276,22 +276,22 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         <div className="space-y-6">
           {/* Payment Information */}
           {programData.paymentRequired && (
-            <Card className="border-0 shadow-lg card-hover">
+            <Card className="card-main card-hover group">
               <CardContent className="p-6">
                 <h3 className="section-title mb-4">Payment Information</h3>
-                <div className="space-y-6">
-                  <div className="space-y-3">
-                    <Label className="label-text text-gray-900">HDB Fee *</Label>
+                <div className="form-section-spacing">
+                  <div className="form-field-spacing">
+                    <Label className="label-text">HDB Fee *</Label>
                     <Input 
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
+                      className="form-input" 
                       value={`₹ ${programData.hdbFee}`}
                       readOnly
                     />
                   </div>
-                  <div className="space-y-3">
-                    <Label className="label-text text-gray-900">MSD Fee *</Label>
+                  <div className="form-field-spacing">
+                    <Label className="label-text">MSD Fee *</Label>
                     <Input 
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
+                      className="form-input" 
                       value={`₹ ${programData.msdFee}`}
                       readOnly
                     />
@@ -303,10 +303,10 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
           
           {/* Travel Information */}
           {(programData.mode === 'offline' || programData.mode === 'hybrid') && groupedFields.travel.length > 0 && (
-            <Card className="border-0 shadow-lg card-hover">
+            <Card className="card-main card-hover group">
               <CardContent className="p-6">
                 <h3 className="section-title mb-4">Travel Information</h3>
-                <div className="space-y-6">
+                <div className="form-section-spacing">
                   {groupedFields.travel.map((field, index) => renderFormField(field, index))}
                 </div>
               </CardContent>
@@ -317,7 +317,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
       {/* Show message if no fields are visible for existing user */}
       {previewAsExisting && visibleFields.length === 0 && !programData.paymentRequired && (
-        <Card className="border-0 shadow-lg col-span-2">
+        <Card className="card-main col-span-2">
           <CardContent className="p-6 text-center">
             <div className="text-gray-600">
               <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
@@ -334,7 +334,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
     const currentField = visibleFields.length > 0 ? visibleFields[0] : null;
     
     return (
-      <div className="space-y-6">
+      <div className="form-section-spacing">
         {/* Existing User Info Banner */}
         {previewAsExisting && (
           <Alert className="border-blue-200 bg-blue-50">
@@ -346,10 +346,10 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
         )}
 
         {currentField ? (
-          <Card className="border-0 shadow-lg">
+          <Card className="card-main card-hover">
             <CardContent className="p-6">
               <h3 className="section-title mb-4">Question 1 of {visibleFields.length}</h3>
-              <div className="space-y-6">
+              <div className="form-section-spacing">
                 {renderFormField(currentField, 0)}
                 <div className="flex justify-end pt-4">
                   <Button disabled className="primary-button">
@@ -360,7 +360,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
             </CardContent>
           </Card>
         ) : (
-          <Card className="border-0 shadow-lg">
+          <Card className="card-main card-hover">
             <CardContent className="p-6 text-center">
               <div className="text-gray-600">
                 <Info className="w-8 h-8 mx-auto mb-3 text-blue-500" />
@@ -379,9 +379,9 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 fade-in">
+    <div className="min-h-screen gradient-bg fade-in">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-white shadow-sm border-b container-main py-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="main-title">Preview Registration Form</h1>
           <p className="description-text mt-2">
@@ -391,13 +391,13 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-lg shadow-xl border-0 overflow-hidden">
+      <div className="container-form">
+        <div className="bg-white rounded-lg shadow-xl card-main overflow-hidden">
           <div className="p-8">
             {/* User Type Toggle */}
-            <div className="flex items-center justify-between mb-8 p-6 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between mb-8 p-6 section-bg rounded-lg">
               <div>
-                <Label className="label-text text-gray-900 font-medium">Preview Mode</Label>
+                <Label className="label-text font-medium">Preview Mode</Label>
                 <p className="description-text mt-1">Toggle to see how the form appears for different user types</p>
               </div>
               <div className="flex items-center space-x-3">
@@ -417,7 +417,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
 
             {/* Form Preview */}
             <div className="border-2 border-dashed border-blue-200 rounded-lg p-6 bg-blue-50/30 transition-all duration-300">
-              <div className="bg-white rounded-lg p-6 shadow-sm">
+              <div className="bg-white rounded-lg p-6 card-secondary">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="section-title">
                     {programData.programName} Registration
@@ -443,7 +443,9 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
                   onClick={onProceed}
                   className="primary-button"
                   style={{
-                    backgroundImage: 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                    backgroundImage: "url('/lovable-uploads/203da045-4558-4833-92ac-07479a336dfb.png')",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
                   }}
                 >
                   ✅ Use This Form As-Is
@@ -451,7 +453,7 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
                 <Button
                   onClick={onEditForm}
                   variant="outline"
-                  className="px-8 py-3 text-base font-medium rounded-full border-blue-400 text-blue-600 hover:bg-blue-50 transition-all duration-300"
+                  className="outline-button"
                 >
                   ✏️ Edit Form Fields
                 </Button>
@@ -462,12 +464,12 @@ const RegistrationFormPreview: React.FC<RegistrationFormPreviewProps> = ({
       </div>
 
       {/* Footer Navigation */}
-      <div className="bg-gray-50 px-4 sm:px-6 lg:px-8 py-6 border-t sticky bottom-0">
+      <div className="section-bg border-t sticky bottom-0 container-main py-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Button
             onClick={onBack}
             variant="outline"
-            className="px-6 py-2 text-sm font-medium rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-300"
+            className="outline-button"
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
             Back

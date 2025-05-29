@@ -50,9 +50,9 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
     const fieldPlaceholder = prefilled && isExistingUser ? "John Doe" : placeholder || `Enter ${label.toLowerCase()}`;
 
     return (
-      <div className="space-y-3">
+      <div className="form-field-spacing">
         <Label className={cn(
-          "label-text text-gray-900 flex items-center gap-1",
+          "label-text flex items-center gap-1",
           prefilled && isExistingUser && "text-gray-600"
         )}>
           {label}
@@ -63,7 +63,7 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
         {type === 'text' && (
           <Input 
             className={cn(
-              "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "form-input",
               prefilled && isExistingUser && "bg-gray-50 text-gray-600"
             )}
             placeholder={fieldPlaceholder}
@@ -75,7 +75,7 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
         {type === 'textarea' && (
           <Textarea 
             className={cn(
-              "flex w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "form-input",
               prefilled && isExistingUser && "bg-gray-50 text-gray-600"
             )}
             placeholder={fieldPlaceholder}
@@ -86,7 +86,7 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
         
         {type === 'select' && (
           <Select disabled>
-            <SelectTrigger className="rounded-md border border-input">
+            <SelectTrigger className="form-input">
               <SelectValue placeholder={fieldPlaceholder} />
             </SelectTrigger>
             <SelectContent>
@@ -116,12 +116,15 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
   ];
 
   const renderSingleColumnLayout = () => (
-    <div className="space-y-6">
-      <Card className="border-0 shadow-lg bg-white">
-        <CardHeader className="p-6">
-          <CardTitle className="section-title">Personal Information</CardTitle>
+    <div className="form-section-spacing">
+      <Card className="card-main card-hover group">
+        <CardHeader className="section-bg p-8 border-b">
+          <CardTitle className="section-title flex items-center gap-2">
+            <User className="w-5 h-5 text-blue-500" />
+            Personal Information
+          </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6 p-6">
+        <CardContent className="form-section-spacing p-6">
           {personalInfoFields.map((field, index) => 
             renderFormField(field.label, field.type, field.mandatory, field.prefilled)
           )}
@@ -129,16 +132,18 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </Card>
       
       {programData.paymentRequired && (
-        <Card className="border-0 shadow-lg bg-white">
-          <CardHeader className="p-6">
+        <Card className="card-main card-hover group">
+          <CardHeader className="section-bg p-8 border-b">
             <CardTitle className="section-title">Payment Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 p-6">
+          <CardContent className="form-section-spacing p-6">
             {paymentFields.map((field, index) => (
-              <div key={index} className="space-y-3">
-                <Label className="label-text text-gray-900">{field.label} *</Label>
+              <div key={index} className="form-field-spacing">
+                <Label className="label-text">
+                  {field.label} <span className="text-red-500">*</span>
+                </Label>
                 <Input 
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
+                  className="form-input" 
                   value={`₹ ${field.value}`}
                   readOnly
                 />
@@ -149,16 +154,16 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       )}
       
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
-        <Card className="border-0 shadow-lg bg-white">
-          <CardHeader className="p-6">
+        <Card className="card-main card-hover group">
+          <CardHeader className="section-bg p-8 border-b">
             <CardTitle className="section-title">Travel Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 p-6">
+          <CardContent className="form-section-spacing p-6">
             {travelFields.map((field, index) => (
-              <div key={index} className="space-y-3">
-                <Label className="label-text text-gray-900">{field.label}</Label>
+              <div key={index} className="form-field-spacing">
+                <Label className="label-text">{field.label}</Label>
                 <Textarea 
-                  className="flex w-full rounded-md border border-input bg-background px-3 py-2" 
+                  className="form-input" 
                   value={field.value}
                   readOnly
                 />
@@ -171,10 +176,13 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
   );
 
   const renderTwoColumnLayout = () => (
-    <div className="space-y-6">
-      <Card className="border-0 shadow-lg bg-white">
-        <CardHeader className="p-6">
-          <CardTitle className="section-title">Personal Information</CardTitle>
+    <div className="form-section-spacing">
+      <Card className="card-main card-hover group">
+        <CardHeader className="section-bg p-8 border-b">
+          <CardTitle className="section-title flex items-center gap-2">
+            <User className="w-5 h-5 text-blue-500" />
+            Personal Information
+          </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
           <div className="grid gap-4 md:grid-cols-2">
@@ -186,17 +194,19 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </Card>
       
       {programData.paymentRequired && (
-        <Card className="border-0 shadow-lg bg-white">
-          <CardHeader className="p-6">
+        <Card className="card-main card-hover group">
+          <CardHeader className="section-bg p-8 border-b">
             <CardTitle className="section-title">Payment Information</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid gap-4 md:grid-cols-2">
               {paymentFields.map((field, index) => (
-                <div key={index} className="space-y-3">
-                  <Label className="label-text text-gray-900">{field.label} *</Label>
+                <div key={index} className="form-field-spacing">
+                  <Label className="label-text">
+                    {field.label} <span className="text-red-500">*</span>
+                  </Label>
                   <Input 
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2" 
+                    className="form-input" 
                     value={`₹ ${field.value}`}
                     readOnly
                   />
@@ -208,17 +218,17 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       )}
       
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
-        <Card className="border-0 shadow-lg bg-white">
-          <CardHeader className="p-6">
+        <Card className="card-main card-hover group">
+          <CardHeader className="section-bg p-8 border-b">
             <CardTitle className="section-title">Travel Information</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid gap-4 md:grid-cols-2">
               {travelFields.map((field, index) => (
-                <div key={index} className="space-y-3">
-                  <Label className="label-text text-gray-900">{field.label}</Label>
+                <div key={index} className="form-field-spacing">
+                  <Label className="label-text">{field.label}</Label>
                   <Textarea 
-                    className="flex w-full rounded-md border border-input bg-background px-3 py-2" 
+                    className="form-input" 
                     value={field.value}
                     readOnly
                   />
@@ -232,12 +242,12 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
   );
 
   const renderQuestionByQuestionLayout = () => (
-    <div className="space-y-6">
-      <Card className="border-0 shadow-lg bg-white">
-        <CardHeader className="p-6">
+    <div className="form-section-spacing">
+      <Card className="card-main">
+        <CardHeader className="section-bg p-8 border-b">
           <CardTitle className="section-title">Question 1 of 7</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6 p-6">
+        <CardContent className="form-section-spacing p-6">
           {renderFormField('Name', 'text', true, true)}
           <div className="flex justify-end pt-4">
             <Button disabled className="primary-button">
@@ -253,9 +263,9 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 fade-in">
+    <div className="min-h-screen gradient-bg fade-in">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-white shadow-sm border-b container-main py-6">
         <div className="max-w-7xl mx-auto">
           <h1 className="main-title">Preview Registration Form</h1>
           <p className="description-text mt-2">
@@ -265,13 +275,13 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white border-0 shadow-xl rounded-lg overflow-hidden">
+      <div className="container-form">
+        <div className="bg-white shadow-xl rounded-lg overflow-hidden card-main">
           <div className="p-8">
             {/* User Type Toggle */}
-            <div className="flex items-center justify-between mb-8 p-6 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between mb-8 p-6 section-bg rounded-lg">
               <div>
-                <Label className="label-text text-gray-900 font-medium">Preview Mode</Label>
+                <Label className="label-text font-medium">Preview Mode</Label>
                 <p className="description-text mt-1">Toggle to see how the form appears for different user types</p>
               </div>
               <div className="flex items-center space-x-3">
@@ -290,13 +300,13 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
             </div>
 
             {/* Layout Selector */}
-            <div className="flex items-center justify-between mb-8 p-6 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between mb-8 p-6 section-bg rounded-lg">
               <div>
-                <Label className="label-text text-gray-900 font-medium">Layout Style</Label>
+                <Label className="label-text font-medium">Layout Style</Label>
                 <p className="description-text mt-1">Choose how form fields are arranged</p>
               </div>
               <Select value={layoutStyle} onValueChange={(value: any) => setLayoutStyle(value)}>
-                <SelectTrigger className="w-64 rounded-md border border-input">
+                <SelectTrigger className="w-64 form-input">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -308,8 +318,8 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
             </div>
 
             {/* Form Preview */}
-            <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 bg-gray-50">
-              <div className="bg-white rounded-lg p-6 shadow-sm">
+            <div className="border-2 border-dashed border-blue-200 rounded-lg p-6 bg-blue-50/30">
+              <div className="bg-white rounded-lg p-6 card-secondary">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="section-title">
                     {programData.programName} Registration
@@ -335,7 +345,9 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
                   onClick={onConfigureFields}
                   className="primary-button"
                   style={{
-                    backgroundImage: 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                    backgroundImage: "url('/lovable-uploads/203da045-4558-4833-92ac-07479a336dfb.png')",
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center'
                   }}
                 >
                   ✅ Use This Form As-Is
@@ -343,7 +355,7 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
                 <Button
                   onClick={onConfigureFields}
                   variant="outline"
-                  className="px-8 py-3 text-base font-medium rounded-full border-blue-400 text-blue-600 hover:bg-blue-50 transition-all duration-300"
+                  className="outline-button"
                 >
                   ✏️ Edit Form Fields
                 </Button>
@@ -354,12 +366,12 @@ const PreviewRegistrationForm: React.FC<PreviewRegistrationFormProps> = ({
       </div>
 
       {/* Footer Navigation */}
-      <div className="bg-gray-50 px-4 sm:px-6 lg:px-8 py-6 border-t sticky bottom-0">
+      <div className="section-bg border-t sticky bottom-0 container-main py-6">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <Button
             onClick={onBack}
             variant="outline"
-            className="px-6 py-2 text-sm font-medium rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-300"
+            className="outline-button"
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
             Back

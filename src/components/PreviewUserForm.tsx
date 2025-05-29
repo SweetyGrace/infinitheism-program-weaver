@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ChevronLeft, Info, User, Edit, Save, Plus, Eye, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -98,9 +99,9 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
     const fieldPlaceholder = field.prefilled && isExistingUser ? "John Doe" : `Enter ${field.label.toLowerCase()}`;
 
     return (
-      <div key={field.id} className="space-y-3">
+      <div key={field.id} className="form-field-spacing">
         <Label className={cn(
-          "label-text text-gray-900 flex items-center gap-2 font-medium",
+          "label-text flex items-center gap-2 font-medium",
           field.prefilled && isExistingUser && "text-gray-600"
         )}>
           {field.label}
@@ -117,7 +118,7 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
           <Input 
             type={field.type}
             className={cn(
-              "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "form-input",
               field.prefilled && isExistingUser && "bg-gray-50 text-gray-600"
             )}
             placeholder={fieldPlaceholder}
@@ -127,7 +128,7 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
         ) : field.type === 'textarea' ? (
           <Textarea 
             className={cn(
-              "flex w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "form-input",
               field.prefilled && isExistingUser && "bg-gray-50 text-gray-600"
             )}
             placeholder={fieldPlaceholder}
@@ -136,7 +137,7 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
           />
         ) : field.type === 'select' ? (
           <Select disabled>
-            <SelectTrigger className="rounded-md border border-input">
+            <SelectTrigger className="form-input">
               <SelectValue placeholder={fieldPlaceholder} />
             </SelectTrigger>
             <SelectContent>
@@ -148,13 +149,13 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
         ) : field.type === 'date' ? (
           <Input 
             type="date"
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="form-input"
             readOnly
           />
         ) : field.type === 'file' ? (
           <Input 
             type="file"
-            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2"
+            className="form-input"
             disabled
           />
         ) : field.type === 'toggle' ? (
@@ -174,36 +175,36 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
   };
 
   const renderSingleColumnLayout = () => (
-    <div className="space-y-8">
-      <Card className="border-0 shadow-lg bg-white card-hover">
-        <CardHeader className="bg-gray-50 border-b p-6">
+    <div className="form-section-spacing">
+      <Card className="card-main card-hover group">
+        <CardHeader className="section-bg border-b p-8">
           <CardTitle className="section-title flex items-center gap-2">
             <User className="w-5 h-5 text-blue-500" />
             Personal Information
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6 p-6">
+        <CardContent className="form-section-spacing p-6">
           {groupedFields.personal.map(field => renderFormField(field))}
         </CardContent>
       </Card>
       
       {programData.paymentRequired && (
-        <Card className="border-0 shadow-lg bg-white card-hover">
-          <CardHeader className="bg-gray-50 border-b p-6">
+        <Card className="card-main card-hover group">
+          <CardHeader className="section-bg border-b p-8">
             <CardTitle className="section-title">Invoice Details</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 p-6">
+          <CardContent className="form-section-spacing p-6">
             {groupedFields.invoice.map(field => renderFormField(field))}
           </CardContent>
         </Card>
       )}
       
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && groupedFields.travel.length > 0 && (
-        <Card className="border-0 shadow-lg bg-white card-hover">
-          <CardHeader className="bg-gray-50 border-b p-6">
+        <Card className="card-main card-hover group">
+          <CardHeader className="section-bg border-b p-8">
             <CardTitle className="section-title">Travel Information</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 p-6">
+          <CardContent className="form-section-spacing p-6">
             {groupedFields.travel.map(field => renderFormField(field, true))}
           </CardContent>
         </Card>
@@ -212,9 +213,9 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
   );
 
   const renderTwoColumnLayout = () => (
-    <div className="space-y-8">
-      <Card className="border-0 shadow-lg bg-white card-hover">
-        <CardHeader className="bg-gray-50 border-b p-6">
+    <div className="form-section-spacing">
+      <Card className="card-main card-hover group">
+        <CardHeader className="section-bg border-b p-8">
           <CardTitle className="section-title flex items-center gap-2">
             <User className="w-5 h-5 text-blue-500" />
             Personal Information
@@ -228,8 +229,8 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
       </Card>
       
       {programData.paymentRequired && (
-        <Card className="border-0 shadow-lg bg-white card-hover">
-          <CardHeader className="bg-gray-50 border-b p-6">
+        <Card className="card-main card-hover group">
+          <CardHeader className="section-bg border-b p-8">
             <CardTitle className="section-title">Invoice Details</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
@@ -241,8 +242,8 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
       )}
       
       {(programData.mode === 'offline' || programData.mode === 'hybrid') && groupedFields.travel.length > 0 && (
-        <Card className="border-0 shadow-lg bg-white card-hover">
-          <CardHeader className="bg-gray-50 border-b p-6">
+        <Card className="card-main card-hover group">
+          <CardHeader className="section-bg border-b p-8">
             <CardTitle className="section-title">Travel Information</CardTitle>
           </CardHeader>
           <CardContent className="p-6">
@@ -262,21 +263,21 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
     if (!currentField) return null;
 
     return (
-      <div className="space-y-6">
-        <Card className="border-0 shadow-lg bg-white">
-          <CardHeader className="bg-gray-50 border-b p-6">
+      <div className="form-section-spacing">
+        <Card className="card-main">
+          <CardHeader className="section-bg border-b p-8">
             <CardTitle className="section-title">
               Question {currentQuestionIndex + 1} of {allFields.length}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-6 p-6">
+          <CardContent className="form-section-spacing p-6">
             {renderFormField(currentField)}
             <div className="flex justify-between pt-4">
               <Button
                 onClick={() => setCurrentQuestionIndex(Math.max(0, currentQuestionIndex - 1))}
                 disabled={currentQuestionIndex === 0}
                 variant="outline"
-                className="px-6 py-2 text-sm font-medium rounded-full border-gray-300 text-gray-600 hover:bg-gray-50 transition-all duration-300"
+                className="outline-button"
               >
                 Previous
               </Button>
@@ -298,9 +299,9 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 fade-in">
+    <div className="min-h-screen gradient-bg fade-in">
       {/* Header */}
-      <div className="bg-white border-b shadow-sm px-4 sm:px-6 lg:px-8 py-6">
+      <div className="bg-white border-b shadow-sm container-main py-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="main-title">Preview User Form</h1>
@@ -328,7 +329,7 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
 
             {/* Layout Selector */}
             <Select value={layoutStyle} onValueChange={(value: any) => setLayoutStyle(value)}>
-              <SelectTrigger className="w-56 rounded-md border border-input">
+              <SelectTrigger className="w-56 form-input">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-white border shadow-lg">
@@ -342,12 +343,12 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-xl border-0 overflow-hidden">
+      <div className="container-main py-8">
+        <div className="bg-white rounded-lg shadow-xl card-main overflow-hidden">
           <div className="p-8">
             {/* Form Preview */}
             <div className="border-2 border-dashed border-blue-200 rounded-lg p-6 bg-blue-50/30">
-              <div className="bg-white rounded-lg p-6 shadow-sm border-0">
+              <div className="bg-white rounded-lg p-6 card-secondary">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="section-title">
                     {programData.programName} Registration
@@ -367,12 +368,12 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
       </div>
 
       {/* Footer Actions */}
-      <div className="bg-gray-50 px-4 sm:px-6 lg:px-8 py-6 border-t sticky bottom-0">
+      <div className="section-bg border-t sticky bottom-0 container-main py-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Button
             onClick={onBack}
             variant="outline"
-            className="px-6 py-2 text-sm font-medium rounded-full border-gray-300 text-gray-700 hover:bg-gray-50 transition-all duration-300"
+            className="outline-button"
           >
             <ChevronLeft className="w-4 h-4 mr-2" />
             Back to Confirmation
@@ -390,6 +391,11 @@ const PreviewUserForm: React.FC<PreviewUserFormProps> = ({
             <Button
               onClick={onEditFormFields}
               className="primary-button"
+              style={{
+                backgroundImage: "url('/lovable-uploads/203da045-4558-4833-92ac-07479a336dfb.png')",
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
             >
               <Edit className="w-4 h-4 mr-2" />
               Edit Form Fields
