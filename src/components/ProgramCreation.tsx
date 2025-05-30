@@ -522,6 +522,51 @@ const ProgramCreation = () => {
                         </RadioGroup>
                       </div>
 
+                      {/* Payment Configuration - Moved from Schedule & Logistics */}
+                      <div className="space-y-6">
+                        <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
+                          <div>
+                            <Label className="text-blue-900 font-medium">Is Payment Required?</Label>
+                            <p className="text-sm text-blue-600">Enable if fees are required for this program</p>
+                          </div>
+                          <Switch
+                            checked={programData.paymentRequired}
+                            onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
+                            className="data-[state=checked]:bg-blue-600"
+                          />
+                        </div>
+
+                        {programData.paymentRequired && (
+                          <div className="space-y-6 bg-blue-50 rounded-lg p-6 border border-blue-200">
+                            <h4 className="text-lg font-medium text-blue-900">Payment Configuration</h4>
+                            <div className="grid grid-cols-2 gap-6">
+                              <div className="space-y-2">
+                                <Label htmlFor="hdbFee" className="text-blue-900 font-medium">HDB Fee (₹)</Label>
+                                <Input
+                                  id="hdbFee"
+                                  type="number"
+                                  value={programData.hdbFee}
+                                  onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
+                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                                  placeholder="Enter HDB fee amount"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="msdFee" className="text-blue-900 font-medium">MSD Fee (₹)</Label>
+                                <Input
+                                  id="msdFee"
+                                  type="number"
+                                  value={programData.msdFee}
+                                  onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
+                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                                  placeholder="Enter MSD fee amount"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
                       {/* Registration Settings Section */}
                       <div className="space-y-6">
                         <h4 className="text-lg font-medium text-blue-900">Registration Settings</h4>
@@ -764,51 +809,6 @@ const ProgramCreation = () => {
                           </div>
                         </div>
                       )}
-
-                      {/* Payment Configuration - Moved from Program Basics */}
-                      <div className="space-y-6">
-                        <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
-                          <div>
-                            <Label className="text-blue-900 font-medium">Is Payment Required?</Label>
-                            <p className="text-sm text-blue-600">Enable if fees are required for this program</p>
-                          </div>
-                          <Switch
-                            checked={programData.paymentRequired}
-                            onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
-                            className="data-[state=checked]:bg-blue-600"
-                          />
-                        </div>
-
-                        {programData.paymentRequired && (
-                          <div className="space-y-6 bg-blue-50 rounded-lg p-6 border border-blue-200">
-                            <h4 className="text-lg font-medium text-blue-900">Payment Configuration</h4>
-                            <div className="grid grid-cols-2 gap-6">
-                              <div className="space-y-2">
-                                <Label htmlFor="hdbFee" className="text-blue-900 font-medium">HDB Fee (₹)</Label>
-                                <Input
-                                  id="hdbFee"
-                                  type="number"
-                                  value={programData.hdbFee}
-                                  onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
-                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                  placeholder="Enter HDB fee amount"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="msdFee" className="text-blue-900 font-medium">MSD Fee (₹)</Label>
-                                <Input
-                                  id="msdFee"
-                                  type="number"
-                                  value={programData.msdFee}
-                                  onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
-                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                  placeholder="Enter MSD fee amount"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
                     </div>
                   </div>
                 </div>
