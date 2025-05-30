@@ -379,7 +379,7 @@ const ProgramCreation = () => {
     );
   }
 
-  // Pages 2-3: Program Basics and Schedule & Logistics with Stepper
+  // Pages 2-3: Program Basics and Schedule & Logistics without Stepper
   if (currentStep === 1 || currentStep === 2) {
     return (
       <div className="min-h-screen bg-white">
@@ -390,431 +390,390 @@ const ProgramCreation = () => {
           </div>
         </div>
 
-        <div className="flex" style={{ paddingBottom: '80px' }}>
-          {/* Left Vertical Stepper */}
-          <div className="w-64 bg-blue-50 border-r border-blue-100 fixed left-0 top-16 bottom-20 p-6">
-            <div className="space-y-6">
-              <div 
-                className={cn(
-                  "flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all",
-                  currentStep === 1 ? "bg-blue-100 text-blue-800" : "text-blue-600 hover:bg-blue-50"
-                )}
-                onClick={() => setCurrentStep(1)}
-              >
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  currentStep === 1 ? "bg-blue-600 text-white" : "bg-blue-200 text-blue-600"
-                )}>
-                  1
-                </div>
-                <span className="font-medium">Program Basics</span>
-              </div>
+        {/* Main Content - No Left Sidebar */}
+        <div className="max-w-[1200px] mx-auto px-6 py-8" style={{ paddingBottom: '80px' }}>
+          
+          {/* Page 2: Program Basics */}
+          {currentStep === 1 && (
+            <div className="animate-fade-in">
               
-              <div 
-                className={cn(
-                  "flex items-center space-x-3 p-3 rounded-lg cursor-pointer transition-all",
-                  currentStep === 2 ? "bg-blue-100 text-blue-800" : "text-blue-600 hover:bg-blue-50"
-                )}
-                onClick={() => setCurrentStep(2)}
-              >
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  currentStep === 2 ? "bg-blue-600 text-white" : "bg-blue-200 text-blue-600"
-                )}>
-                  2
-                </div>
-                <span className="font-medium">Schedule & Logistics</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Main Content */}
-          <div className="flex-1 ml-64">
-            <div className="max-w-[1200px] mx-auto px-6 py-8">
-              
-              {/* Page 2: Program Basics */}
-              {currentStep === 1 && (
-                <div className="animate-fade-in">
-                  
-                  {/* Banner Image Section */}
-                  {programData.programType && (
-                    <div className="mb-8">
-                      <div className="w-full max-w-[1200px] mx-auto">
-                        <img
-                          src="/lovable-uploads/96a2a56e-9042-45b6-b8df-4093d76967e3.png"
-                          alt={`Banner for selected program: ${programData.programType.name} – A quick glance.`}
-                          className="w-full h-auto max-h-60 object-cover rounded-lg shadow-lg border border-blue-100"
-                          style={{ maxHeight: '240px' }}
-                        />
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="bg-white rounded-lg shadow-lg border border-blue-100 overflow-hidden p-8">
-                    
-                    {/* Banner Section */}
-                    {programData.programType && (
-                      <div className="bg-blue-50 rounded-lg p-6 border border-blue-100 mb-8 text-center">
-                        <p className="text-blue-900 font-medium text-lg">
-                          You're now setting the stage for a {programData.programType?.name} program.
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="space-y-8">
-                      <div className="space-y-2">
-                        <Label htmlFor="programName" className="text-blue-900 font-medium">Program Name *</Label>
-                        <Input
-                          id="programName"
-                          value={programData.programName}
-                          onChange={(e) => updateProgramData({ programName: e.target.value })}
-                          className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                          placeholder="Enter program name"
-                        />
-                      </div>
-
-                      <div className="space-y-4">
-                        <Label className="text-blue-900 font-medium">Sessions</Label>
-                        <div className="grid grid-cols-2 gap-4">
-                          {programData.programType?.defaultSessions.map((session) => (
-                            <div key={session} className="flex items-center space-x-3 bg-blue-50 rounded-lg p-4 border border-blue-100">
-                              <Checkbox
-                                id={session}
-                                checked={programData.selectedSessions.includes(session)}
-                                onCheckedChange={(checked) => {
-                                  if (checked) {
-                                    updateProgramData({
-                                      selectedSessions: [...programData.selectedSessions, session]
-                                    });
-                                  } else {
-                                    updateProgramData({
-                                      selectedSessions: programData.selectedSessions.filter(s => s !== session)
-                                    });
-                                  }
-                                }}
-                                className="border-blue-400 data-[state=checked]:bg-blue-600"
-                              />
-                              <Label htmlFor={session} className="text-blue-900 font-medium">{session}</Label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <Label className="text-blue-900 font-medium">Mode of Program</Label>
-                        <RadioGroup
-                          value={programData.mode}
-                          onValueChange={(value: 'online' | 'offline' | 'hybrid') => updateProgramData({ mode: value })}
-                          className="flex space-x-8"
-                        >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="online" id="online" className="border-blue-400 text-blue-600" />
-                            <Label htmlFor="online" className="text-blue-900">Online</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="offline" id="offline" className="border-blue-400 text-blue-600" />
-                            <Label htmlFor="offline" className="text-blue-900">Offline</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="hybrid" id="hybrid" className="border-blue-400 text-blue-600" />
-                            <Label htmlFor="hybrid" className="text-blue-900">Hybrid</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
-
-                      {/* Payment Configuration - Moved from Schedule & Logistics */}
-                      <div className="space-y-6">
-                        <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
-                          <div>
-                            <Label className="text-blue-900 font-medium">Is Payment Required?</Label>
-                            <p className="text-sm text-blue-600">Enable if fees are required for this program</p>
-                          </div>
-                          <Switch
-                            checked={programData.paymentRequired}
-                            onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
-                            className="data-[state=checked]:bg-blue-600"
-                          />
-                        </div>
-
-                        {programData.paymentRequired && (
-                          <div className="space-y-6 bg-blue-50 rounded-lg p-6 border border-blue-200">
-                            <h4 className="text-lg font-medium text-blue-900">Payment Configuration</h4>
-                            <div className="grid grid-cols-2 gap-6">
-                              <div className="space-y-2">
-                                <Label htmlFor="hdbFee" className="text-blue-900 font-medium">HDB Fee (₹)</Label>
-                                <Input
-                                  id="hdbFee"
-                                  type="number"
-                                  value={programData.hdbFee}
-                                  onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
-                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                  placeholder="Enter HDB fee amount"
-                                />
-                              </div>
-                              <div className="space-y-2">
-                                <Label htmlFor="msdFee" className="text-blue-900 font-medium">MSD Fee (₹)</Label>
-                                <Input
-                                  id="msdFee"
-                                  type="number"
-                                  value={programData.msdFee}
-                                  onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
-                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                  placeholder="Enter MSD fee amount"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Registration Settings Section */}
-                      <div className="space-y-6">
-                        <h4 className="text-lg font-medium text-blue-900">Registration Settings</h4>
-                        
-                        {/* Registration Period */}
-                        <div className="space-y-4">
-                          <Label className="text-blue-900 font-medium">Registration Period</Label>
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                              <Label className="text-blue-900">Program Registration Start Date & Time</Label>
-                              <div className="grid grid-cols-2 gap-2">
-                                <Input
-                                  type="date"
-                                  value={programData.registrationStartDate}
-                                  onChange={(e) => updateProgramData({ registrationStartDate: e.target.value })}
-                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                />
-                                <Input
-                                  type="time"
-                                  value={programData.registrationStartTime}
-                                  onChange={(e) => updateProgramData({ registrationStartTime: e.target.value })}
-                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                />
-                              </div>
-                            </div>
-                            <div className="space-y-2">
-                              <Label className="text-blue-900">Program Registration End Date & Time</Label>
-                              <div className="grid grid-cols-2 gap-2">
-                                <Input
-                                  type="date"
-                                  value={programData.registrationEndDate}
-                                  onChange={(e) => updateProgramData({ registrationEndDate: e.target.value })}
-                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                />
-                                <Input
-                                  type="time"
-                                  value={programData.registrationEndTime}
-                                  onChange={(e) => updateProgramData({ registrationEndTime: e.target.value })}
-                                  className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Approval Required Toggle */}
-                        <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
-                          <div className="flex items-center gap-3">
-                            <Label className="text-blue-900 font-medium">Is approval required for registration?</Label>
-                            <div className="group relative">
-                              <Info className="w-4 h-4 text-blue-500 cursor-help" />
-                              <div className="absolute invisible group-hover:visible bg-blue-900 text-white text-xs rounded px-2 py-1 -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                                Approval allows manual review of each registration before confirmation
-                              </div>
-                            </div>
-                          </div>
-                          <Switch
-                            checked={programData.approvalRequired}
-                            onCheckedChange={(checked) => updateProgramData({ approvalRequired: checked })}
-                            className="data-[state=checked]:bg-blue-600"
-                          />
-                        </div>
-
-                        {/* Seat Limit Toggle */}
-                        <div className="space-y-4">
-                          <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
-                            <div className="flex items-center gap-3">
-                              <Label className="text-blue-900 font-medium">Is there a limit on seats?</Label>
-                              <div className="group relative">
-                                <Info className="w-4 h-4 text-blue-500 cursor-help" />
-                                <div className="absolute invisible group-hover:visible bg-blue-900 text-white text-xs rounded px-2 py-1 -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
-                                  Leave unchecked for unlimited participants
-                                </div>
-                              </div>
-                            </div>
-                            <Switch
-                              checked={programData.seatLimitEnabled}
-                              onCheckedChange={(checked) => updateProgramData({ seatLimitEnabled: checked })}
-                              className="data-[state=checked]:bg-blue-600"
-                            />
-                          </div>
-
-                          {programData.seatLimitEnabled && (
-                            <div className="space-y-2">
-                              <Label className="text-blue-900 font-medium">Enter maximum number of seats</Label>
-                              <Input
-                                type="number"
-                                min="1"
-                                value={programData.maxSeats || ''}
-                                onChange={(e) => updateProgramData({ maxSeats: Math.max(1, parseInt(e.target.value) || 0) })}
-                                className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
-                                placeholder="Enter maximum seats"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+              {/* Banner Image Section */}
+              {programData.programType && (
+                <div className="mb-8">
+                  <div className="w-full max-w-[1200px] mx-auto">
+                    <img
+                      src="/lovable-uploads/96a2a56e-9042-45b6-b8df-4093d76967e3.png"
+                      alt={`Banner for selected program: ${programData.programType.name} – A quick glance.`}
+                      className="w-full h-auto max-h-60 object-cover rounded-lg shadow-lg border border-blue-100"
+                      style={{ maxHeight: '240px' }}
+                    />
                   </div>
                 </div>
               )}
 
-              {/* Page 3: Schedule & Logistics */}
-              {currentStep === 2 && (
-                <div className="animate-fade-in">
-                  
-                  {/* Banner Image Section */}
-                  {programData.programType && (
-                    <div className="mb-8">
-                      <div className="w-full max-w-[1200px] mx-auto">
-                        <img
-                          src="/lovable-uploads/96a2a56e-9042-45b6-b8df-4093d76967e3.png"
-                          alt={`Banner for selected program: ${programData.programType.name} – A quick glance.`}
-                          className="w-full h-auto max-h-60 object-cover rounded-lg shadow-lg border border-blue-100"
-                          style={{ maxHeight: '240px' }}
-                        />
-                      </div>
+              <div className="bg-white rounded-lg shadow-lg border border-blue-100 overflow-hidden p-8">
+                
+                {/* Banner Section */}
+                {programData.programType && (
+                  <div className="bg-blue-50 rounded-lg p-6 border border-blue-100 mb-8 text-center">
+                    <p className="text-blue-900 font-medium text-lg">
+                      You're now setting the stage for a {programData.programType?.name} program.
+                    </p>
+                  </div>
+                )}
+
+                <div className="space-y-8">
+                  <div className="space-y-2">
+                    <Label htmlFor="programName" className="text-blue-900 font-medium">Program Name *</Label>
+                    <Input
+                      id="programName"
+                      value={programData.programName}
+                      onChange={(e) => updateProgramData({ programName: e.target.value })}
+                      className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                      placeholder="Enter program name"
+                    />
+                  </div>
+
+                  <div className="space-y-4">
+                    <Label className="text-blue-900 font-medium">Sessions</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      {programData.programType?.defaultSessions.map((session) => (
+                        <div key={session} className="flex items-center space-x-3 bg-blue-50 rounded-lg p-4 border border-blue-100">
+                          <Checkbox
+                            id={session}
+                            checked={programData.selectedSessions.includes(session)}
+                            onCheckedChange={(checked) => {
+                              if (checked) {
+                                updateProgramData({
+                                  selectedSessions: [...programData.selectedSessions, session]
+                                });
+                              } else {
+                                updateProgramData({
+                                  selectedSessions: programData.selectedSessions.filter(s => s !== session)
+                                });
+                              }
+                            }}
+                            className="border-blue-400 data-[state=checked]:bg-blue-600"
+                          />
+                          <Label htmlFor={session} className="text-blue-900 font-medium">{session}</Label>
+                        </div>
+                      ))}
                     </div>
-                  )}
+                  </div>
 
-                  <div className="bg-white rounded-lg shadow-lg border border-blue-100 overflow-hidden p-8">
-                    <div className="space-y-8">
-                      
-                      <div className="space-y-6">
-                        <h3 className="text-lg font-medium text-blue-900">Session Scheduler</h3>
-                        {programData.selectedSessions.map((session) => (
-                          <Card key={session} className="border-blue-100 bg-blue-50">
-                            <CardContent className="p-6">
-                              <h4 className="font-medium text-blue-900 mb-4">{session}</h4>
-                              <div className="grid grid-cols-2 gap-4 mb-4">
-                                <div className="space-y-2">
-                                  <Label className="text-blue-900">Start Date</Label>
-                                  <Input
-                                    type="date"
-                                    value={programData.sessionSchedules[session]?.startDate || ''}
-                                    onChange={(e) => {
-                                      const startDate = e.target.value;
-                                      const endDate = calculateEndDate(startDate, session);
-                                      updateProgramData({
-                                        sessionSchedules: {
-                                          ...programData.sessionSchedules,
-                                          [session]: { 
-                                            ...programData.sessionSchedules[session],
-                                            startDate, 
-                                            endDate 
-                                          }
-                                        }
-                                      });
-                                    }}
-                                    className="rounded-lg border-blue-200 bg-white"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label className="text-blue-900">End Date</Label>
-                                  <Input
-                                    type="date"
-                                    value={programData.sessionSchedules[session]?.endDate || ''}
-                                    disabled
-                                    className="rounded-lg border-blue-200 bg-blue-50"
-                                  />
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <Label className="text-blue-900">Check-in Time</Label>
-                                  <Input
-                                    type="time"
-                                    value={programData.sessionSchedules[session]?.checkInTime || ''}
-                                    onChange={(e) => {
-                                      const checkInTime = e.target.value;
-                                      const checkOutTime = calculateCheckOutTime(checkInTime);
-                                      updateProgramData({
-                                        sessionSchedules: {
-                                          ...programData.sessionSchedules,
-                                          [session]: { 
-                                            ...programData.sessionSchedules[session],
-                                            checkInTime, 
-                                            checkOutTime 
-                                          }
-                                        }
-                                      });
-                                    }}
-                                    className="rounded-lg border-blue-200 bg-white"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label className="text-blue-900">Check-out Time</Label>
-                                  <Input
-                                    type="time"
-                                    value={programData.sessionSchedules[session]?.checkOutTime || ''}
-                                    disabled
-                                    className="rounded-lg border-blue-200 bg-blue-50"
-                                  />
-                                  <p className="text-xs text-blue-500">Auto-calculated (6 hours after check-in)</p>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        ))}
+                  <div className="space-y-4">
+                    <Label className="text-blue-900 font-medium">Mode of Program</Label>
+                    <RadioGroup
+                      value={programData.mode}
+                      onValueChange={(value: 'online' | 'offline' | 'hybrid') => updateProgramData({ mode: value })}
+                      className="flex space-x-8"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="online" id="online" className="border-blue-400 text-blue-600" />
+                        <Label htmlFor="online" className="text-blue-900">Online</Label>
                       </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="offline" id="offline" className="border-blue-400 text-blue-600" />
+                        <Label htmlFor="offline" className="text-blue-900">Offline</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="hybrid" id="hybrid" className="border-blue-400 text-blue-600" />
+                        <Label htmlFor="hybrid" className="text-blue-900">Hybrid</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
 
-                      {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
-                        <div className="space-y-6">
+                  {/* Payment Configuration */}
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
+                      <div>
+                        <Label className="text-blue-900 font-medium">Is Payment Required?</Label>
+                        <p className="text-sm text-blue-600">Enable if fees are required for this program</p>
+                      </div>
+                      <Switch
+                        checked={programData.paymentRequired}
+                        onCheckedChange={(checked) => updateProgramData({ paymentRequired: checked })}
+                        className="data-[state=checked]:bg-blue-600"
+                      />
+                    </div>
+
+                    {programData.paymentRequired && (
+                      <div className="space-y-6 bg-blue-50 rounded-lg p-6 border border-blue-200">
+                        <h4 className="text-lg font-medium text-blue-900">Payment Configuration</h4>
+                        <div className="grid grid-cols-2 gap-6">
                           <div className="space-y-2">
-                            <Label className="text-blue-900 font-medium">Venue Address</Label>
-                            <Select value={programData.selectedVenue} onValueChange={handleVenueChange}>
-                              <SelectTrigger className="rounded-lg border-blue-200 bg-white">
-                                <SelectValue placeholder="Select venue" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-white border border-blue-200 shadow-lg rounded-xl z-50">
-                                {predefinedVenues.map((venue) => (
-                                  <SelectItem key={venue} value={venue} className="hover:bg-blue-50">
-                                    {venue === 'Custom' ? 'Custom Address' : venue}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            
-                            {programData.selectedVenue === 'Custom' && (
-                              <Textarea
-                                value={programData.customVenue}
-                                onChange={(e) => handleCustomVenueChange(e.target.value)}
-                                className="rounded-lg border-blue-200 bg-white mt-2"
-                                placeholder="Enter custom venue address"
-                                rows={3}
-                              />
-                            )}
-                          </div>
-
-                          <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
-                            <div>
-                              <Label className="text-blue-900 font-medium">Is Travel Required?</Label>
-                              <p className="text-sm text-blue-600">Enable if transportation is needed</p>
-                            </div>
-                            <Switch
-                              checked={programData.travelRequired}
-                              onCheckedChange={(checked) => updateProgramData({ travelRequired: checked })}
-                              className="data-[state=checked]:bg-blue-600"
+                            <Label htmlFor="hdbFee" className="text-blue-900 font-medium">HDB Fee (₹)</Label>
+                            <Input
+                              id="hdbFee"
+                              type="number"
+                              value={programData.hdbFee}
+                              onChange={(e) => updateProgramData({ hdbFee: Number(e.target.value) })}
+                              className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                              placeholder="Enter HDB fee amount"
                             />
                           </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="msdFee" className="text-blue-900 font-medium">MSD Fee (₹)</Label>
+                            <Input
+                              id="msdFee"
+                              type="number"
+                              value={programData.msdFee}
+                              onChange={(e) => updateProgramData({ msdFee: Number(e.target.value) })}
+                              className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                              placeholder="Enter MSD fee amount"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Registration Settings Section */}
+                  <div className="space-y-6">
+                    <h4 className="text-lg font-medium text-blue-900">Registration Settings</h4>
+                    
+                    {/* Registration Period */}
+                    <div className="space-y-4">
+                      <Label className="text-blue-900 font-medium">Registration Period</Label>
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label className="text-blue-900">Program Registration Start Date & Time</Label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              type="date"
+                              value={programData.registrationStartDate}
+                              onChange={(e) => updateProgramData({ registrationStartDate: e.target.value })}
+                              className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                            />
+                            <Input
+                              type="time"
+                              value={programData.registrationStartTime}
+                              onChange={(e) => updateProgramData({ registrationStartTime: e.target.value })}
+                              className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-blue-900">Program Registration End Date & Time</Label>
+                          <div className="grid grid-cols-2 gap-2">
+                            <Input
+                              type="date"
+                              value={programData.registrationEndDate}
+                              onChange={(e) => updateProgramData({ registrationEndDate: e.target.value })}
+                              className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                            />
+                            <Input
+                              type="time"
+                              value={programData.registrationEndTime}
+                              onChange={(e) => updateProgramData({ registrationEndTime: e.target.value })}
+                              className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Approval Required Toggle */}
+                    <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
+                      <div className="flex items-center gap-3">
+                        <Label className="text-blue-900 font-medium">Is approval required for registration?</Label>
+                        <div className="group relative">
+                          <Info className="w-4 h-4 text-blue-500 cursor-help" />
+                          <div className="absolute invisible group-hover:visible bg-blue-900 text-white text-xs rounded px-2 py-1 -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                            Approval allows manual review of each registration before confirmation
+                          </div>
+                        </div>
+                      </div>
+                      <Switch
+                        checked={programData.approvalRequired}
+                        onCheckedChange={(checked) => updateProgramData({ approvalRequired: checked })}
+                        className="data-[state=checked]:bg-blue-600"
+                      />
+                    </div>
+
+                    {/* Seat Limit Toggle */}
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
+                        <div className="flex items-center gap-3">
+                          <Label className="text-blue-900 font-medium">Is there a limit on seats?</Label>
+                          <div className="group relative">
+                            <Info className="w-4 h-4 text-blue-500 cursor-help" />
+                            <div className="absolute invisible group-hover:visible bg-blue-900 text-white text-xs rounded px-2 py-1 -top-8 left-1/2 transform -translate-x-1/2 whitespace-nowrap">
+                              Leave unchecked for unlimited participants
+                            </div>
+                          </div>
+                        </div>
+                        <Switch
+                          checked={programData.seatLimitEnabled}
+                          onCheckedChange={(checked) => updateProgramData({ seatLimitEnabled: checked })}
+                          className="data-[state=checked]:bg-blue-600"
+                        />
+                      </div>
+
+                      {programData.seatLimitEnabled && (
+                        <div className="space-y-2">
+                          <Label className="text-blue-900 font-medium">Enter maximum number of seats</Label>
+                          <Input
+                            type="number"
+                            min="1"
+                            value={programData.maxSeats || ''}
+                            onChange={(e) => updateProgramData({ maxSeats: Math.max(1, parseInt(e.target.value) || 0) })}
+                            className="rounded-lg border-blue-200 focus:border-blue-400 focus:ring-blue-200 bg-white"
+                            placeholder="Enter maximum seats"
+                          />
                         </div>
                       )}
                     </div>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Page 3: Schedule & Logistics */}
+          {currentStep === 2 && (
+            <div className="animate-fade-in">
+              
+              {/* Banner Image Section */}
+              {programData.programType && (
+                <div className="mb-8">
+                  <div className="w-full max-w-[1200px] mx-auto">
+                    <img
+                      src="/lovable-uploads/96a2a56e-9042-45b6-b8df-4093d76967e3.png"
+                      alt={`Banner for selected program: ${programData.programType.name} – A quick glance.`}
+                      className="w-full h-auto max-h-60 object-cover rounded-lg shadow-lg border border-blue-100"
+                      style={{ maxHeight: '240px' }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="bg-white rounded-lg shadow-lg border border-blue-100 overflow-hidden p-8">
+                <div className="space-y-8">
+                  
+                  <div className="space-y-6">
+                    <h3 className="text-lg font-medium text-blue-900">Session Scheduler</h3>
+                    {programData.selectedSessions.map((session) => (
+                      <Card key={session} className="border-blue-100 bg-blue-50">
+                        <CardContent className="p-6">
+                          <h4 className="font-medium text-blue-900 mb-4">{session}</h4>
+                          <div className="grid grid-cols-2 gap-4 mb-4">
+                            <div className="space-y-2">
+                              <Label className="text-blue-900">Start Date</Label>
+                              <Input
+                                type="date"
+                                value={programData.sessionSchedules[session]?.startDate || ''}
+                                onChange={(e) => {
+                                  const startDate = e.target.value;
+                                  const endDate = calculateEndDate(startDate, session);
+                                  updateProgramData({
+                                    sessionSchedules: {
+                                      ...programData.sessionSchedules,
+                                      [session]: { 
+                                        ...programData.sessionSchedules[session],
+                                        startDate, 
+                                        endDate 
+                                      }
+                                    }
+                                  });
+                                }}
+                                className="rounded-lg border-blue-200 bg-white"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-blue-900">End Date</Label>
+                              <Input
+                                type="date"
+                                value={programData.sessionSchedules[session]?.endDate || ''}
+                                disabled
+                                className="rounded-lg border-blue-200 bg-blue-50"
+                              />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-2">
+                              <Label className="text-blue-900">Check-in Time</Label>
+                              <Input
+                                type="time"
+                                value={programData.sessionSchedules[session]?.checkInTime || ''}
+                                onChange={(e) => {
+                                  const checkInTime = e.target.value;
+                                  const checkOutTime = calculateCheckOutTime(checkInTime);
+                                  updateProgramData({
+                                    sessionSchedules: {
+                                      ...programData.sessionSchedules,
+                                      [session]: { 
+                                        ...programData.sessionSchedules[session],
+                                        checkInTime, 
+                                        checkOutTime 
+                                      }
+                                    }
+                                  });
+                                }}
+                                className="rounded-lg border-blue-200 bg-white"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label className="text-blue-900">Check-out Time</Label>
+                              <Input
+                                type="time"
+                                value={programData.sessionSchedules[session]?.checkOutTime || ''}
+                                disabled
+                                className="rounded-lg border-blue-200 bg-blue-50"
+                              />
+                              <p className="text-xs text-blue-500">Auto-calculated (6 hours after check-in)</p>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+
+                  {(programData.mode === 'offline' || programData.mode === 'hybrid') && (
+                    <div className="space-y-6">
+                      <div className="space-y-2">
+                        <Label className="text-blue-900 font-medium">Venue Address</Label>
+                        <Select value={programData.selectedVenue} onValueChange={handleVenueChange}>
+                          <SelectTrigger className="rounded-lg border-blue-200 bg-white">
+                            <SelectValue placeholder="Select venue" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-white border border-blue-200 shadow-lg rounded-xl z-50">
+                            {predefinedVenues.map((venue) => (
+                              <SelectItem key={venue} value={venue} className="hover:bg-blue-50">
+                                {venue === 'Custom' ? 'Custom Address' : venue}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        
+                        {programData.selectedVenue === 'Custom' && (
+                          <Textarea
+                            value={programData.customVenue}
+                            onChange={(e) => handleCustomVenueChange(e.target.value)}
+                            className="rounded-lg border-blue-200 bg-white mt-2"
+                            placeholder="Enter custom venue address"
+                            rows={3}
+                          />
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between bg-blue-50 rounded-lg p-4 border border-blue-100">
+                        <div>
+                          <Label className="text-blue-900 font-medium">Is Travel Required?</Label>
+                          <p className="text-sm text-blue-600">Enable if transportation is needed</p>
+                        </div>
+                        <Switch
+                          checked={programData.travelRequired}
+                          onCheckedChange={(checked) => updateProgramData({ travelRequired: checked })}
+                          className="data-[state=checked]:bg-blue-600"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
